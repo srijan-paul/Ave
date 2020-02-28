@@ -1,0 +1,5 @@
+# single line comment
+/* multi line
+comment. Expect no parse errors*/
+
+var a = 2
