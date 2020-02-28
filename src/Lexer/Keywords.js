@@ -13,17 +13,15 @@ const keywords = {
     "nil": Token.NIL,
     "or": Token.OR,
     "print": Token.PRINT,
-    "def": Token.DEF,
+    "var": Token.VAR,
     "return": Token.RETURN,
     "this": Token.THIS,
     "true": Token.TRUE,
     "while": Token.WHILE,
-    "end": Token.END,
     "break": Token.BREAK,
     "skip": Token.SKIP,
     "static": Token.STATIC,
     "class": Token.CLASS,
-    "new": Token.NEW
 }
 
 try {

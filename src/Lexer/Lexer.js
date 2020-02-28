@@ -181,6 +181,9 @@ function lex(text) {
             case '#':
                 while (!eof() && peek() !== '\n') next();
                 break;
+            case '|':
+                addToken(Token.PIPE);
+                break;
             case ' ':
             case '':
             case '\r':
@@ -212,7 +215,6 @@ function lex(text) {
                     addToken(Token.DEDENT);
                     currentLevel = levels.pop();
                 }
-
                 break;
             case '"':
                 getString();
