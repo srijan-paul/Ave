@@ -17,7 +17,8 @@ function lex(text) {
         line = 1,
         tokens = [],
         currentLevel = 0,
-        levels = [];
+        levels = [],
+        brackets = [];
 
     function eof() {
         return current > text.length;
@@ -107,14 +108,18 @@ function lex(text) {
         switch (c) {
             case '(':
                 addToken(Token.L_PAREN);
+                brackets.push(c);
                 break;
             case ')':
                 addToken(Token.R_PAREN);
+                brackets.pop();
                 break;
             case '[':
                 addToken(Token.L_SQUARE_BRACE);
+                brackets.push(c);
                 break;
             case ']':
+                brackets.pop();
                 addToken(Token.R_SQUARE_BRACE);
                 break;
             case '{':
@@ -190,6 +195,7 @@ function lex(text) {
                 break;
             case '\n':
                 line++;
+                if (brackets.length) break;
                 let n = 0;
                 while (match(' ')) n++;
                 if (n % indentLen != 0)
