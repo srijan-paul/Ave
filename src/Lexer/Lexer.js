@@ -180,6 +180,9 @@ function lex(text) {
             case '>':
                 addToken(match('=') ? Token.GREATER_EQUAL : Token.GREATER);
                 break;
+            case '&':
+                addToken(Token.AMPERSAND);
+                break;
             case '#':
                 let str = '';
                 while (!eof() && peek() !== '\n') str += next();

@@ -24,6 +24,7 @@ const Token = Object.freeze({
     COLON: 'COLON',
     COMMA: 'COMMA',
     DOT: 'DOT',
+    AMPERSAND: 'AMPERSAND',
 
     //One or two character tokens :
     BANG: 'BANG',
