@@ -1,0 +1,2 @@
+var fun = |x:num, y:num| => x * y
+print(fun(2, 3)) # expect 6
