@@ -18,7 +18,8 @@ function lex(text) {
         tokens = [],
         currentLevel = 0,
         levels = [],
-        brackets = [];
+        brackets = [],
+        comments = [];
 
     function eof() {
         return current > text.length;
@@ -87,15 +88,16 @@ function lex(text) {
         }
     }
 
-    function getString() {
-        while (peek() !== '"' && !eof()) {
+    function getString(quote) {
+        while (peek() !== quote && !eof()) {
             if (peek() === '\n') line++;
             next();
         }
         if (eof()) throw new Error(`Unterminated String literal at line ${line}`);
-        next(); //consume the ending "
+        next(); //consume the ending quote
         addToken(Token.STRING, text.substring(start + 1, current - 1));
     }
+
 
     function match(expected) {
         if (eof()) return false
@@ -217,7 +219,8 @@ function lex(text) {
                 }
                 break;
             case '"':
-                getString();
+            case "'":
+                getString(c);
                 break;
             default:
                 if (isDigit(c)) {
@@ -245,3 +248,4 @@ function lex(text) {
 
     return tokens;
 }
+

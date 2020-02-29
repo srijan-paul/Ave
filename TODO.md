@@ -12,6 +12,8 @@
 
 [ ] Test the Lexer
 
+[x] Add support for both single and double quote strings
+
 **Feature Implementation**
 
 [ ] Come up with a way to implement passing by reference
