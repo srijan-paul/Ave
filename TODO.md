@@ -6,7 +6,7 @@
 
 **Lexer**
 
-[ ] Lexer should return an object that stores tokens as well as comments
+[x] Lexer should return an object that stores tokens as well as comments
 
 [ ] Write Lexer specific tests
 

@@ -181,7 +181,14 @@ function lex(text) {
                 addToken(match('=') ? Token.GREATER_EQUAL : Token.GREATER);
                 break;
             case '#':
-                while (!eof() && peek() !== '\n') next();
+                let str = '';
+                while (!eof() && peek() !== '\n') str += next();
+                comments.push({
+                    string: str,
+                    line: line,
+                    start: start,
+                    end: current
+                });
                 break;
             case '|':
                 addToken(Token.PIPE);
@@ -246,6 +253,8 @@ function lex(text) {
         string: ""
     });
 
-    return tokens;
+    return {
+        tokens: tokens,
+        comments: comments
+    };
 }
-
