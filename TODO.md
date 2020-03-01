@@ -26,7 +26,7 @@
 
 **Parser**
 
-[ ] Begin work on the parser
+[x] Begin work on the parser
 
 [ ] Go through TDOP once more
 
