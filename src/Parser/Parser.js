@@ -1,7 +1,7 @@
 let Token, lex;
 
 if (typeof module == "object") {
-    Token = require('../Lexer/Tokens.js');
+    Token = require('../Lexer/Tokens.js'); // TODO :remove in production
     lex = require('../Lexer/Lexer.js')
 }
 
@@ -119,22 +119,24 @@ function parse(lexOutput) {
 
     function assignment() {
         let node = or();
-        while (match(Token.EQUAL, Token.PLUS_EQUAL, Token.STAR_EQUAL,
+        if (match(Token.EQUAL, Token.PLUS_EQUAL, Token.STAR_EQUAL,
                 Token.MINUS_EQUAL, Token.SLASH_EQUAL)) {
-            let rvalue = or();
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
+            let tok = prev();
+            let val = assignment();
+            // TODO: add L-value check here
+            node =  {
+                type: Node.AssignExpr,
                 left: node,
-                right: rvalue
+                right: val,
+                op: tok
             }
         }
         return node;
     }
 
-    function or(){
+    function or() {
         let node = and();
-        while(match(Token.OR)){
+        while (match(Token.OR)) {
             let node = {
                 type: Node.BinaryExpr,
                 op: prev(),
@@ -146,9 +148,9 @@ function parse(lexOutput) {
     }
 
 
-    function and(){
+    function and() {
         let node = equality();
-        while(match(Token.AND)){
+        while (match(Token.AND)) {
             let node = {
                 type: Node.BinaryExpr,
                 op: prev(),
@@ -159,9 +161,9 @@ function parse(lexOutput) {
         return node;
     }
 
-    function equality(){
+    function equality() {
         let node = comparison();
-        while(match(Token.EQUAL_EQUAL, Token.BANG_EQUAL)){
+        while (match(Token.EQUAL_EQUAL, Token.BANG_EQUAL)) {
             let node = {
                 type: BinaryExpr,
                 op: prev(),
@@ -172,8 +174,8 @@ function parse(lexOutput) {
         return node;
     }
 
-    function comparison(){
-        // TODO : Fill this guy
+    function comparison() {
+        let node = addition()
     }
 
     return program();
