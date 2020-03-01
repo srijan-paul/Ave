@@ -124,7 +124,7 @@ function parse(lexOutput) {
             let tok = prev();
             let val = assignment();
             // TODO: add L-value check here
-            node =  {
+            node = {
                 type: Node.AssignExpr,
                 left: node,
                 right: val,
@@ -175,8 +175,62 @@ function parse(lexOutput) {
     }
 
     function comparison() {
-        let node = addition()
+        let node = addition();
+        while (match(Token.GREATER, Token.LESS_EQUAL, Token.GREATER_EQUAL,
+                Token.LESS)) {
+            let node = {
+                type: BinaryExpr,
+                op: prev(),
+                left: node,
+                right: addition()
+            }
+        }
+        return node;
     }
+
+    function addition() {
+        let node = multiplication();
+        while (match(Token.ADD, Token.MINUS)) {
+            let node = {
+                type: BinaryExpr,
+                op: prev(),
+                left: node,
+                right: multiplication()
+            }
+        }
+        return node;
+    }
+
+    function multiplication() {
+        let node = power();
+        while (match(Token.SLASH, Token.STAR, Token.MOD)) {
+            let node = {
+                type: BinaryExpr,
+                op: prev(),
+                left: node,
+                right: power()
+            }
+        }
+        return node;
+    }
+
+    function power() {
+        let node = unary();
+        while (match(Token.STAR_STAR)) {
+            let node = {
+                type: BinaryExpr,
+                op: prev(),
+                left: node,
+                right: unary()
+            }
+        }
+        return node;
+    }
+
+    function unary(){
+        // TODO: fill this guy in    
+    }
+    
 
     return program();
 }
