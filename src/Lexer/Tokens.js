@@ -14,6 +14,7 @@ const Token = Object.freeze({
     MINUS_MINUS: 'MINUS_MINUS',
     MINUS_EQUAL: 'MINUS_EQUAL',
     STAR: 'STAR',
+    STAR_STAR: 'STAR_STAR',
     MOD: 'MOD',
     R_PAREN: 'R_PAREN',
     L_PAREN: 'L_PAREN',
@@ -27,8 +28,7 @@ const Token = Object.freeze({
     COMMA: 'COMMA',
     DOT: 'DOT',
     AMPERSAND: 'AMPERSAND',
-
-    //One or two character tokens :
+    
     BANG: 'BANG',
     BANG_EQUAL: 'BANG_EQUAL',
     LESS: 'LESS',

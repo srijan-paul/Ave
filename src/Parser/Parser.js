@@ -1,5 +1,3 @@
-let Token, lex;
-
 if (typeof module == "object") {
     Token = require('../Lexer/Tokens.js'); // TODO :remove in production
     lex = require('../Lexer/Lexer.js')
@@ -82,7 +80,7 @@ function parse(lexOutput) {
     }
 
     function match(...types) {
-        if(eof()) return false;
+        if (eof()) return false;
         for (let type of types) {
             if (peek().type === type) {
                 next();
@@ -90,6 +88,10 @@ function parse(lexOutput) {
             }
         }
         return false;
+    }
+
+    function error(str){
+        console.log(str); //TODO : extend this later
     }
 
     // I start off with a simple expression parser that implements recursive
@@ -110,7 +112,7 @@ function parse(lexOutput) {
         **: 8
         (prefix) --, ++, (unary) +, - , ! : 9
         (postfix) ++, -- : 10
-        . , [  (member access) : 11
+        . , [  (member access) and function call: 11
         (..) grouping : 12
     */
 
@@ -133,7 +135,7 @@ function parse(lexOutput) {
 
     function assignment() {
         let node = or();
-   
+
         if (match(Token.EQUAL, Token.PLUS_EQUAL, Token.STAR_EQUAL,
                 Token.MINUS_EQUAL, Token.SLASH_EQUAL)) {
             let tok = prev();
@@ -166,7 +168,7 @@ function parse(lexOutput) {
     function and() {
         let node = equality();
         while (match(Token.AND)) {
-            let node = {
+            node = {
                 type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
@@ -179,8 +181,8 @@ function parse(lexOutput) {
     function equality() {
         let node = comparison();
         while (match(Token.EQUAL_EQUAL, Token.BANG_EQUAL)) {
-            let node = {
-                type: BinaryExpr,
+            node = {
+                type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
                 right: comparison()
@@ -193,8 +195,8 @@ function parse(lexOutput) {
         let node = addition();
         while (match(Token.GREATER, Token.LESS_EQUAL, Token.GREATER_EQUAL,
                 Token.LESS)) {
-            let node = {
-                type: BinaryExpr,
+            node = {
+                type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
                 right: addition()
@@ -219,8 +221,8 @@ function parse(lexOutput) {
     function multiplication() {
         let node = power();
         while (match(Token.SLASH, Token.STAR, Token.MOD)) {
-             node = {
-                type: BinaryExpr,
+            node = {
+                type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
                 right: power()
@@ -233,10 +235,10 @@ function parse(lexOutput) {
         let node = unary();
         while (match(Token.STAR_STAR)) {
             node = {
-                type: BinaryExpr,
+                type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
-                right: unary()
+                right: node
             }
         }
         return node;
@@ -258,10 +260,12 @@ function parse(lexOutput) {
     function postfix() {
         let node = member();
         if (match(Token.PLUS_PLUS, Token.MINUS_MINUS)) {
+            let token = prev();
             return {
                 type: Node.PostUnaryExpr,
-                operator: prev(),
-                operand: node
+                operator: token.string,
+                operand: node,
+                tok: token
             }
         }
         return node;
@@ -269,12 +273,16 @@ function parse(lexOutput) {
 
     function member() {
         let node = grouping();
-        if (match(Token.DOT)) {
-            return {
+        while (match(Token.DOT)) {
+            let tok = prev(),
+            member = primary();
+            if(member.type != Node.Identifier)
+                error('Member name be Identifier');
+            node =  {
                 type: Node.MemberExpr,
-                tok: prev(),
                 object: node,
-                member: member()
+                member: member,
+                tok: tok
             }
         }
 

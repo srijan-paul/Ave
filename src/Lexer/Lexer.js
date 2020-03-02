@@ -165,7 +165,7 @@ function lex(text) {
             case '*':
                 if (match('=')) {
                     addToken(Token.STAR_EQUAL);
-                } else if (match('**')) {
+                } else if (match('*')) {
                     addToken(Token.STAR_STAR);
                 } else {
                     addToken(Token.STAR);
