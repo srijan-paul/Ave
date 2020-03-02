@@ -28,6 +28,6 @@
 
 [x] Begin work on the parser
 
-[ ] Go through TDOP once more
+[x] Go through TDOP once more (I've decided to use recursive descent instead of Pratt)
 
 [ ] _Allow keyword overwriting (?)_

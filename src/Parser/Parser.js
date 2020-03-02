@@ -23,7 +23,8 @@ const Node = {
     VarDeclaration: 'VarDeclaration',
     VarDeclarator: 'VarDeclarator',
     ArrayExpr: 'ArrayExpr',
-    UnaryExpr: 'UnaryExpr',
+    PreUnaryExpr: 'PreUnaryExpr',
+    PostUnaryExpr: 'PostUnaryExpr',
     BreakStmt: 'BreakStmt',
     CallExpr: 'CallExpr',
     DotExpr: 'DotExpr',
@@ -31,6 +32,9 @@ const Node = {
     SkipStmt: 'SkipStmt',
     ReturnStmt: 'ReturnStmt',
     CondExpr: 'CondExpr',
+    MemberExpr: 'MemberExpr',
+    GroupingExpr: 'GroupingExpr',
+    Identifier: 'Identifier',
     Program: 'Program'
 }
 
@@ -42,7 +46,7 @@ function parse(lexOutput) {
     // HELPER FUNCTIONS:
 
     function eof() {
-        return current >= tokens.length;
+        return current >= tokens.length || tokens[current].type == Token.EOF;
     }
 
     function next() {
@@ -69,7 +73,16 @@ function parse(lexOutput) {
         return peek().type === tokType;
     }
 
+    function isLiteral(token) {
+        return token.type === Token.STRING ||
+            token.type === Token.NUMBER ||
+            token.type === Token.FALSE ||
+            token.type === Token.TRUE ||
+            token.type === Token.NIL
+    }
+
     function match(...types) {
+        if(eof()) return false;
         for (let type of types) {
             if (peek().type === type) {
                 next();
@@ -108,7 +121,8 @@ function parse(lexOutput) {
             comments: lexOutput.comments
         }
         while (!eof()) {
-            statements.push(expression());
+            node.statements.push(expression());
+            //console.log(next())
         }
         return node;
     }
@@ -119,6 +133,7 @@ function parse(lexOutput) {
 
     function assignment() {
         let node = or();
+   
         if (match(Token.EQUAL, Token.PLUS_EQUAL, Token.STAR_EQUAL,
                 Token.MINUS_EQUAL, Token.SLASH_EQUAL)) {
             let tok = prev();
@@ -137,7 +152,7 @@ function parse(lexOutput) {
     function or() {
         let node = and();
         while (match(Token.OR)) {
-            let node = {
+            node = {
                 type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
@@ -190,9 +205,9 @@ function parse(lexOutput) {
 
     function addition() {
         let node = multiplication();
-        while (match(Token.ADD, Token.MINUS)) {
-            let node = {
-                type: BinaryExpr,
+        while (match(Token.PLUS, Token.MINUS)) {
+            node = {
+                type: Node.BinaryExpr,
                 op: prev(),
                 left: node,
                 right: multiplication()
@@ -204,7 +219,7 @@ function parse(lexOutput) {
     function multiplication() {
         let node = power();
         while (match(Token.SLASH, Token.STAR, Token.MOD)) {
-            let node = {
+             node = {
                 type: BinaryExpr,
                 op: prev(),
                 left: node,
@@ -217,7 +232,7 @@ function parse(lexOutput) {
     function power() {
         let node = unary();
         while (match(Token.STAR_STAR)) {
-            let node = {
+            node = {
                 type: BinaryExpr,
                 op: prev(),
                 left: node,
@@ -227,14 +242,76 @@ function parse(lexOutput) {
         return node;
     }
 
-    function unary(){
-        // TODO: fill this guy in    
+    function unary() {
+        // TODO: add parsing for postfix ++ and --  
+        if (match(Token.PLUS_PLUS, Token.MINUS_MINUS,
+                Token.BANG, Token.MINUS)) {
+            return {
+                type: Node.PreUnaryExpr,
+                operator: prev(),
+                operand: unary()
+            }
+        }
+        return postfix();
     }
-    
+
+    function postfix() {
+        let node = member();
+        if (match(Token.PLUS_PLUS, Token.MINUS_MINUS)) {
+            return {
+                type: Node.PostUnaryExpr,
+                operator: prev(),
+                operand: node
+            }
+        }
+        return node;
+    }
+
+    function member() {
+        let node = grouping();
+        if (match(Token.DOT)) {
+            return {
+                type: Node.MemberExpr,
+                tok: prev(),
+                object: node,
+                member: member()
+            }
+        }
+
+        if (match(Token.L_SQUARE_BRACE)) {
+            // TODO: make this work
+        }
+
+        return node;
+    }
+
+    function grouping() {
+        if (match(Token.L_PAREN)) {
+            let val = expression();
+            expect(Token.R_PAREN);
+            return {
+                type: Node.GroupingExpr,
+                value: val
+            }
+        }
+        return primary();
+    }
+
+    function primary() {
+        if (isLiteral(peek()))
+            return {
+                type: Node.Literal,
+                tok: next()
+            }
+        if (match(Token.IDENTIFIER))
+            return {
+                type: Node.Identifier,
+                name: prev().string,
+                tok: prev()
+            }
+
+        //TODO : add unexpected case handling here
+    }
 
     return program();
 }
-
-const test =
-    `a = b or c`
-parse(lex(test));

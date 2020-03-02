@@ -143,10 +143,21 @@ function lex(text) {
                 addToken(Token.COLON);
                 break;
             case '-':
-                addToken(match('=') ? Token.PLUS_EQUAL : Token.MINUS);
+                if(match('='))
+                    addToken(Token.MINUS_EQUAL);
+                else if(match('-'))
+                    addToken(Token.MINUS_MINUS);
+                else
+                    addToken(Token.MINUS);
                 break;
             case '+':
-                addToken(match('=') ? Token.PLUS_EQUAL : Token.PLUS);
+                if(match('='))
+                    addToken(Token.PLUS_EQUAL);
+                else if(match('-'))
+                    addToken(Token.PLUS_PLUS);
+                else
+                    addToken(Token.PLUS);
+                break;
                 break;
             case ';':
                 addToken(Token.SEMICOLON);

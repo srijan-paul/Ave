@@ -6,10 +6,12 @@ const Token = Object.freeze({
 
     //single character tokens :
     EQUAL: 'EQUAL',
-    PIPE : 'PIPE',
+    PIPE: 'PIPE',
     PLUS: 'PLUS',
     PLUS_EQUAL: 'PLUS_EQUAL',
+    PLUS_PLUS: 'PLUS_PLUS',
     MINUS: 'MINUS',
+    MINUS_MINUS: 'MINUS_MINUS',
     MINUS_EQUAL: 'MINUS_EQUAL',
     STAR: 'STAR',
     MOD: 'MOD',
