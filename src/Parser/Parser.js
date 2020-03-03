@@ -4,10 +4,7 @@ if (typeof module == "object") {
 }
 
 // starting with a simple expression parser
-
 // converts a stream of tokens into an AST
-
-
 
 const Node = {
     BinaryExpr: 'BinaryExpr',
@@ -30,7 +27,8 @@ const Node = {
     SkipStmt: 'SkipStmt',
     ReturnStmt: 'ReturnStmt',
     CondExpr: 'CondExpr',
-    MemberExpr: 'MemberExpr',
+    PropertyExpr: 'PropertyExpr',
+    ArrayMemExpr: 'ArrayMemExpr',
     GroupingExpr: 'GroupingExpr',
     Identifier: 'Identifier',
     Program: 'Program'
@@ -90,7 +88,7 @@ function parse(lexOutput) {
         return false;
     }
 
-    function error(str){
+    function error(str) {
         console.log(str); //TODO : extend this later
     }
 
@@ -272,24 +270,55 @@ function parse(lexOutput) {
     }
 
     function member() {
-        let node = grouping();
+        let node = call();
+
+        // parse propert expressions
+
         while (match(Token.DOT)) {
             let tok = prev(),
-            member = primary();
-            if(member.type != Node.Identifier)
+                member = primary();
+            if (member.type != Node.Identifier)
                 error('Member name be Identifier');
-            node =  {
-                type: Node.MemberExpr,
+            node = {
+                type: Node.PropertyExpr,
                 object: node,
                 member: member,
                 tok: tok
             }
         }
 
-        if (match(Token.L_SQUARE_BRACE)) {
-            // TODO: make this work
-        }
+        // Parse array member expressions
 
+        if (match(Token.L_SQUARE_BRACE)) {
+            let tok = prev(),
+                member = expression()
+            node = {
+                type: Node.ArrayMemExpr,
+                object: node,
+                member: member,
+                tok: tok
+            }
+            expect(Token.R_SQUARE_BRACE, 'ERRORRRR')
+        }
+        return node;
+    }
+
+    function call() {
+        let node = grouping();
+        while (match(Token.L_PAREN)) {
+            let tok = prev(),
+                args = [];
+            while (!match(Token.R_PAREN)) {
+                args.push(expression());
+                match(Token.COMMA);
+            }
+            node = {
+                type: Node.CallExpr,
+                callee: node,
+                args: args,
+                tok: tok
+            }
+        }
         return node;
     }
 
@@ -302,22 +331,44 @@ function parse(lexOutput) {
                 value: val
             }
         }
+        return array();
+    }
+
+    function array() {
+
+        if (match(Token.L_SQUARE_BRACE)) {
+            let node = {
+                type: Node.ArrayExpr,
+                elements: []
+            }
+            while (true) {
+                node.elements.push(expression());
+                if (!match(Token.COMMA)) {
+                    expect(Token.R_SQUARE_BRACE);
+                    break;
+                }
+            }
+            return node;
+        }
         return primary();
     }
 
     function primary() {
-        if (isLiteral(peek()))
+        if (isLiteral(peek())) {
             return {
                 type: Node.Literal,
                 tok: next()
             }
-        if (match(Token.IDENTIFIER))
+        }
+
+        if (match(Token.IDENTIFIER)) {
+            let tok = prev();
             return {
                 type: Node.Identifier,
-                name: prev().string,
-                tok: prev()
+                name: tok.string,
+                tok: tok
             }
-
+        }
         //TODO : add unexpected case handling here
     }
 

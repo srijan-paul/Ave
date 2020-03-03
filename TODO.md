@@ -30,4 +30,10 @@
 
 [x] Go through TDOP once more (I've decided to use recursive descent instead of Pratt)
 
-[ ] _Allow keyword overwriting (?)_
+[x] Parse arrays
+
+[x] Parse Call expressions
+
+[ ] Start parsing statements and declarations
+
+[NO] _Allow keyword overwriting (?)_
