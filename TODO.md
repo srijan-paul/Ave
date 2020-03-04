@@ -14,6 +14,8 @@
 
 [x] Add support for both single and double quote strings
 
+[ ] Add better error messages
+
 **Feature Implementation**
 
 [ ] Come up with a way to implement passing by reference
@@ -34,6 +36,10 @@
 
 [x] Parse Call expressions
 
+[ ] Implement scope
+
 [ ] Start parsing statements and declarations
+
+[ ] Add better error messages
 
 [NO] _Allow keyword overwriting (?)_

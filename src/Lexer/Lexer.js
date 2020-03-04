@@ -143,17 +143,17 @@ function lex(text) {
                 addToken(Token.COLON);
                 break;
             case '-':
-                if(match('='))
+                if (match('='))
                     addToken(Token.MINUS_EQUAL);
-                else if(match('-'))
+                else if (match('-'))
                     addToken(Token.MINUS_MINUS);
                 else
                     addToken(Token.MINUS);
                 break;
             case '+':
-                if(match('='))
+                if (match('='))
                     addToken(Token.PLUS_EQUAL);
-                else if(match('-'))
+                else if (match('-'))
                     addToken(Token.PLUS_PLUS);
                 else
                     addToken(Token.PLUS);
