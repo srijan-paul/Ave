@@ -16,15 +16,15 @@
     <script src="Lexer/Lexer.js"></script>
     <script src="Parser/Parser.js"></script>
     <script type="text/javascript">
-        if (typeof module == "object") {
-            lex = require('./Lexer/Lexer.js');
-            parse = require('./Parser/Parser.js');
-        }
+        // if (typeof module == "object") {
+        //     lex = require('./Lexer/Lexer.js');
+        //     parse = require('./Parser/Parser.js');
+        // }
 
-        const text =
-            `var a = if a then b else 1 + 2,b = 12`;
-        console.log(lex(text));
-        console.log(parse(lex(text)));
+        // const text =
+        //     `var a = 1 in [1,2,3]`;
+        // console.log(lex(text));
+        // console.log(parse(lex(text)));
     </script>
 </body>
 

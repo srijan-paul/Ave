@@ -31,6 +31,7 @@ const Node = {
     ArrayMemExpr: 'ArrayMemExpr',
     GroupingExpr: 'GroupingExpr',
     Identifier: 'Identifier',
+    InExpr: 'InExpr'
 }
 
 function parse(lexOutput) {
@@ -58,9 +59,9 @@ function parse(lexOutput) {
         return tokens[current];
     }
 
-    function expect(tokType) {
-        if (peek().type != tokType)
-            throw new Error('Placeholder');
+    function expect(tokType, err) {
+        if (!peek() || peek().type != tokType)
+            throw new Error(err);
         return next();
     }
 
@@ -100,6 +101,7 @@ function parse(lexOutput) {
 
         = , += , -= , **=, *= , /=  :1
         if then else 2
+        in 2.5
         or : 3
         and : 4
         ==, != : 4
@@ -172,6 +174,7 @@ function parse(lexOutput) {
         return node;
     }
 
+
     function or() {
         let node = and();
         while (match(Token.OR)) {
@@ -213,7 +216,7 @@ function parse(lexOutput) {
     }
 
     function comparison() {
-        let node = addition();
+        let node = inExpr();
         while (match(Token.GREATER, Token.LESS_EQUAL, Token.GREATER_EQUAL,
                 Token.LESS)) {
             node = {
@@ -221,6 +224,18 @@ function parse(lexOutput) {
                 op: prev(),
                 left: node,
                 right: addition()
+            }
+        }
+        return node;
+    }
+
+    function inExpr() {
+        let node = addition();
+        if (match(Token.IN)) {
+            node = {
+                type: Node.InExpr,
+                left: node,
+                right: atom()
             }
         }
         return node;
@@ -315,14 +330,14 @@ function parse(lexOutput) {
 
         if (match(Token.L_SQUARE_BRACE)) {
             let tok = prev(),
-                member = expression()
+                member = expression();
             node = {
                 type: Node.ArrayMemExpr,
                 object: node,
                 member: member,
                 tok: tok
             }
-            expect(Token.R_SQUARE_BRACE, 'ERRORRRR')
+            expect(Token.R_SQUARE_BRACE, 'ERRORRRR');
         }
         return node;
     }
@@ -367,7 +382,7 @@ function parse(lexOutput) {
             while (true) {
                 node.elements.push(expression());
                 if (!match(Token.COMMA)) {
-                    expect(Token.R_SQUARE_BRACE);
+                    expect(Token.R_SQUARE_BRACE, 'Expected "]"');
                     break;
                 }
             }
@@ -375,6 +390,7 @@ function parse(lexOutput) {
         }
         return primary();
     }
+
 
     function primary() {
         if (isLiteral(peek())) {
@@ -431,6 +447,6 @@ function parse(lexOutput) {
             node.value = expression();
         return node;
     }
-    
+
     return program();
 }

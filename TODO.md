@@ -26,7 +26,7 @@
 
 [ ] Write tests for operator overloading
 
-[ ] Implement 'in' expresions
+[ ] Implement 'in' expressions
 
 [ ] Implement 'for' expressions
 
