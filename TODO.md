@@ -26,6 +26,10 @@
 
 [ ] Write tests for operator overloading
 
+[ ] Implement 'in' expresions
+
+[ ] Implement 'for' expressions
+
 **Parser**
 
 [x] Begin work on the parser
@@ -45,3 +49,7 @@
 [ ] Come up with a way to add operator overloading
 
 [NO] _Allow keyword overwriting (?)_
+
+**Other**
+
+[ ] Create an error handlig module

@@ -431,5 +431,6 @@ function parse(lexOutput) {
             node.value = expression();
         return node;
     }
+    
     return program();
 }
