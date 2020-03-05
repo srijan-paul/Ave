@@ -8,7 +8,7 @@
 </head>
 
 <!-- NOTE : This HTML file exists purely for the purpose of testing
-    and debugging the parse tree in the console -->
+    and debugging the parse tree in the console, better test suite will be added later -->
 
 <body>
     <script src="Lexer/Tokens.js"></script>
@@ -16,15 +16,18 @@
     <script src="Lexer/Lexer.js"></script>
     <script src="Parser/Parser.js"></script>
     <script type="text/javascript">
-        // if (typeof module == "object") {
-        //     lex = require('./Lexer/Lexer.js');
-        //     parse = require('./Parser/Parser.js');
-        // }
+//         if (typeof module == "object") {
+//             lex = require('./Lexer/Lexer.js');
+//             parse = require('./Parser/Parser.js');
+//         }
 
-        // const text =
-        //     `var a = 1 in [1,2,3]`;
-        // console.log(lex(text));
-        // console.log(parse(lex(text)));
+//         const text =
+// `for a in b
+//     say(a)
+//     do(a)
+// `
+//         console.log(lex(text));
+//         console.log(parse(lex(text)));
     </script>
 </body>
 

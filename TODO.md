@@ -26,9 +26,9 @@
 
 [ ] Write tests for operator overloading
 
-[ ] Implement 'in' expressions
+[x] Implement 'in' expressions
 
-[ ] Implement 'for' expressions
+[x] Implement 'for' expressions
 
 **Parser**
 
@@ -42,11 +42,15 @@
 
 [ ] Implement scope
 
-[ ] Start parsing statements and declarations
+[x] Start parsing statements and declarations
 
 [ ] Add better error messages
 
 [ ] Come up with a way to add operator overloading
+
+[ ] Write several more tests for the parser
+
+[ ] Add the spread operator and support it's parsing
 
 [NO] _Allow keyword overwriting (?)_
 

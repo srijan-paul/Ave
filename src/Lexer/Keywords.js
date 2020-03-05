@@ -7,7 +7,6 @@ const keywords = {
     "else": Token.ELSE,
     "false": Token.FALSE,
     "for": Token.FOR,
-    "then": Token.THEN,
     "fn": Token.FN,
     "if": Token.IF,
     "nil": Token.NIL,

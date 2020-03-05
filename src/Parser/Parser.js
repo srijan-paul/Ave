@@ -31,7 +31,8 @@ const Node = {
     ArrayMemExpr: 'ArrayMemExpr',
     GroupingExpr: 'GroupingExpr',
     Identifier: 'Identifier',
-    InExpr: 'InExpr'
+    InExpr: 'InExpr',
+    ForExpr: 'ForExpr'
 }
 
 function parse(lexOutput) {
@@ -81,15 +82,14 @@ function parse(lexOutput) {
         if (eof()) return false;
         for (let type of types) {
             if (peek().type === type) {
-                next();
-                return true;
+                return next();
             }
         }
         return false;
     }
 
     function error(str) {
-        console.log(str); //TODO : extend this later
+        console.error(str); //TODO : extend this later
     }
 
     // I start off with a simple expression parser that implements recursive
@@ -101,18 +101,19 @@ function parse(lexOutput) {
 
         = , += , -= , **=, *= , /=  :1
         if then else 2
-        in 2.5
-        or : 3
-        and : 4
-        ==, != : 4
-        >, >=,<, <=: 5
-        + - : 6
-        %,*,/: 7
-        **: 8
-        (prefix) --, ++, (unary) +, - , ! : 9
-        (postfix) ++, -- : 10
-        . , [  (member access) and function call: 11
-        (..) grouping : 12
+        in 3
+        for 4
+        or : 5
+        and : 6
+        ==, != : 7
+        >, >=,<, <=: 8
+        + - : 9
+        %,*,/: 10
+        **: 11
+        (prefix) --, ++, (unary) +, - , ! : 12
+        (postfix) ++, -- : 13
+        . , [  (member access) and function call: 14
+        (..) grouping : 15
     */
 
     function program() {
@@ -157,17 +158,15 @@ function parse(lexOutput) {
     function conditional() {
         let node = or();
         while (match(Token.IF)) {
-            let cond = conditional();
-            expect(Token.THEN, 'Expected then token');
-            let consequent = conditional(),
-                alternate = null;
-            if (match(Token.ELSE)) {
+            let cond = conditional(),
+            alternate = null;
+            if(match(Token.ELSE)){
                 alternate = conditional();
             }
             node = {
                 type: Node.CondExpr,
                 condition: cond,
-                consequent: consequent,
+                consequent: node,
                 alternate: alternate
             }
         }
@@ -230,13 +229,27 @@ function parse(lexOutput) {
     }
 
     function inExpr() {
-        let node = addition();
+        let node = forExpr();
         if (match(Token.IN)) {
             node = {
                 type: Node.InExpr,
                 left: node,
                 right: atom()
             }
+        }
+        return node;
+    }
+
+    function forExpr() {
+        let node = addition();
+        if (match(Token.FOR)) {
+            node = {
+                type: Node.ForExpr,
+                inExpr: conditional(),
+                action: node
+            }
+            if (node.inExpr.type !== Node.InExpr)
+                error('Expected in');
         }
         return node;
     }
@@ -314,10 +327,9 @@ function parse(lexOutput) {
         // parse property expressions
 
         while (match(Token.DOT)) {
-            let tok = prev(),
-                member = primary();
-            if (member.type != Node.Identifier)
-                error('Member name be Identifier');
+            let tok = prev();
+            let member = atom();
+            //TODO: add valid member check here
             node = {
                 type: Node.PropertyExpr,
                 object: node,
@@ -409,6 +421,7 @@ function parse(lexOutput) {
             }
         }
         //TODO : add unexpected case handling here
+        error('Unexpected token ' + next().string);
     }
 
     // PARSING STATEMENTS:
@@ -418,9 +431,28 @@ function parse(lexOutput) {
             case Token.VAR:
             case Token.CONST:
                 return varDecl();
+            case Token.FOR:
+                return forStmt();
             default:
                 return expression();
         }
+    }
+
+    function forStmt() {
+        next();
+        let node = {
+            type: Node.ForStmt,
+            iterator: inExpr(),
+            body: {
+                type: Node.Program,
+                statements: []
+            }
+        }
+        expect(Token.INDENT, 'Expected Indented block');
+        
+        while(!match(Token.DEDENT))
+            node.body.statements.push(statement());
+        return node;
     }
 
     function varDecl() {
