@@ -16,6 +16,8 @@
 
 [ ] Add better error messages
 
+[ ] Handle the spaces at the end of file better
+
 **Feature Implementation**
 
 [ ] Come up with a way to implement passing by reference
