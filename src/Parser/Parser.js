@@ -266,7 +266,7 @@ function parse(lexOutput) {
     }
 
     function unary() {
-        // TODO: add parsing for postfix ++ and --  
+
         if (match(Token.PLUS_PLUS, Token.MINUS_MINUS,
                 Token.BANG, Token.MINUS)) {
             return {
@@ -403,7 +403,6 @@ function parse(lexOutput) {
             case Token.CONST:
                 return varDecl();
             default:
-                // TODO: Add unexpected case handling here
                 return expression();
         }
     }
@@ -412,14 +411,26 @@ function parse(lexOutput) {
         let node = {
             type: Node.VarDeclaration,
             kind: next().string,
-            name: next().string,
-            value: null,
+            declarators: [],
             tok: prev()
         }
-        if (match(Token.EQUAL)) {
-            node.value = expression();
+
+        node.declarators.push(declarator());
+        while (match(Token.COMMA)) {
+            node.declarators.push(declarator());
         }
+
         return node;
     }
+
+    function declarator() {
+        let node = {
+            name: expect(Token.IDENTIFIER, 'Expected Variable Name')
+        }
+        if (match(Token.EQUAL))
+            node.value = expression();
+        return node;
+    }
+
     return program();
 }

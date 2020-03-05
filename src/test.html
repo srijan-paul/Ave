@@ -22,7 +22,7 @@
         }
 
         const text =
-            `var a = if a then b else 1 + 2`;
+            `var a = if a then b else 1 + 2, b = 12`;
         console.log(lex(text))
         console.log(parse(lex(text)));
     </script>
