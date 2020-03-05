@@ -22,6 +22,7 @@ const keywords = {
     "skip": Token.SKIP,
     "static": Token.STATIC,
     "class": Token.CLASS,
+    "enum": Token.ENUM
 }
 
 try {

@@ -1,4 +1,4 @@
-var fun = |x| => x*2
+var fun = |x| -> x*2
 print(fun(3))
 
 #expect 6

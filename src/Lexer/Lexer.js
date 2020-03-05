@@ -147,6 +147,8 @@ function lex(text) {
                     addToken(Token.MINUS_EQUAL);
                 else if (match('-'))
                     addToken(Token.MINUS_MINUS);
+                else if (match('>'))
+                    addToken(Token.ARROW);
                 else
                     addToken(Token.MINUS);
                 break;
@@ -183,8 +185,6 @@ function lex(text) {
             case '<':
                 if (match('='))
                     addToken(Token.LESS_EQUAL);
-                else if (match('-'))
-                    addToken(Token.ARROW);
                 else
                     addToken(Token.LESS);
                 break;

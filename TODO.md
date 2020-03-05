@@ -42,4 +42,6 @@
 
 [ ] Add better error messages
 
+[ ] Come up with a way to add operator overloading
+
 [NO] _Allow keyword overwriting (?)_
