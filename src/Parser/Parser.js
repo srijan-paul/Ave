@@ -33,7 +33,8 @@ const Node = {
     Identifier: 'Identifier',
     InExpr: 'InExpr',
     ForExpr: 'ForExpr',
-    Enum: 'Enum'
+    Enum: 'Enum',
+    FuncParam: 'FuncParam'
 }
 
 function parse(lexOutput) {
@@ -467,19 +468,64 @@ function parse(lexOutput) {
                 return breakStmt();
             case Token.CONTINUE:
                 return continueStmt();
+            case Token.FN:
+                return func();
             default:
                 return expression();
         }
     }
 
-    function breakStmt(){
+    function func() {
+        next();
+        let name = expect(Token.IDENTIFIER, 'Expected name.');
+        let node = {
+            type: Node.FuncDecl,
+            name: name.string,
+            tok: name,
+            params: parseParams(),
+            body: {
+                type: Node.Program,
+                statements: []
+            }
+        }
+
+        if (match(Token.IDENTIFIER)) {
+            node.name = prev().string;
+            node.tok = prev();
+        }
+
+        expect(Token.INDENT, 'Expected Indented block');
+        while (!match(Token.DEDENT)) {
+            node.body.statements.push(statement());
+        }
+        return node;
+    }
+
+    function parseParams() {
+        expect(Token.L_PAREN, 'Expected "("');
+        let params = []
+        while (!match(Token.R_PAREN)) {
+            let node = {
+                type: Node.FuncParam,
+                name: expect(Token.IDENTIFIER, 'Expected name as identifier.'),
+            }
+            if (match(Token.EQUAL)) {
+                node.default = expression();
+            }
+            consume(Token.COMMA);
+            params.push(node);
+        }
+        return params;
+    }
+
+    function breakStmt() {
         return {
             type: Node.BreakStmt,
             tok: next()
         }
     }
 
-    function returnStmt(){
+    function returnStmt() {
         let tok = next();
         return {
             type: Node.ReturnStmt,
@@ -488,14 +534,14 @@ function parse(lexOutput) {
         }
     }
 
-    function continueStmt(){
-        return{
+    function continueStmt() {
+        return {
             type: Node.ContinueStmt,
             tok: next()
         }
     }
 
-    function whileStmt(){
+    function whileStmt() {
         let tok = next();
         let node = {
             type: Node.WhileStmt,
@@ -508,7 +554,7 @@ function parse(lexOutput) {
         }
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block')
-        while(!match(Token.DEDENT)){
+        while (!match(Token.DEDENT)) {
             node.body.statements.push(statement());
         }
         return node;
@@ -557,7 +603,6 @@ function parse(lexOutput) {
     }
 
     function IfStmt() {
-
         let node = {
             type: Node.IfStmt,
             condition: expression(),
@@ -580,7 +625,7 @@ function parse(lexOutput) {
             }
             consume(Token.COLON);
             expect(Token.INDENT, 'Expected Indented block');
-            while(!match(Token.DEDENT)){
+            while (!match(Token.DEDENT)) {
                 node.alternate.statements.push(statement())
             }
         }

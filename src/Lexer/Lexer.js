@@ -155,7 +155,7 @@ function lex(text) {
             case '+':
                 if (match('='))
                     addToken(Token.PLUS_EQUAL);
-                else if (match('-'))
+                else if (match('+'))
                     addToken(Token.PLUS_PLUS);
                 else
                     addToken(Token.PLUS);
