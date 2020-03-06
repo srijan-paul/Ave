@@ -54,6 +54,8 @@
 
 [ ] Add the spread operator and support it's parsing
 
+[ ] Implement enum parsing
+
 [NO] _Allow keyword overwriting (?)_
 
 **Other**

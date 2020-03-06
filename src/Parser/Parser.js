@@ -32,7 +32,8 @@ const Node = {
     GroupingExpr: 'GroupingExpr',
     Identifier: 'Identifier',
     InExpr: 'InExpr',
-    ForExpr: 'ForExpr'
+    ForExpr: 'ForExpr',
+    Enum: 'Enum'
 }
 
 function parse(lexOutput) {
@@ -68,6 +69,11 @@ function parse(lexOutput) {
 
     function check(tokType) {
         return peek().type === tokType;
+    }
+
+    function consume(tokType) {
+        if (peek() && peek().type == tokType)
+            next();
     }
 
     function isLiteral(token) {
@@ -159,8 +165,8 @@ function parse(lexOutput) {
         let node = or();
         while (match(Token.IF)) {
             let cond = conditional(),
-            alternate = null;
-            if(match(Token.ELSE)){
+                alternate = null;
+            if (match(Token.ELSE)) {
                 alternate = conditional();
             }
             node = {
@@ -433,9 +439,30 @@ function parse(lexOutput) {
                 return varDecl();
             case Token.FOR:
                 return forStmt();
+            case Token.ENUM:
+                next();
+                return enumDecl();
             default:
                 return expression();
         }
+    }
+
+    function enumDecl() {
+        let node = {
+            type: Node.Enum,
+            members: []
+        }
+        expect(Token.EQUAL, 'Enum must be declared');
+        consume(Token.COLON);
+        expect(Token.INDENT, 'Expected Indented block');
+        while (!match(Token.DEDENT)) {
+            let mem = primary();
+            if (mem.type != Node.Identifier) {
+                error('Expected Name as enum literal.');
+            }
+            node.members.push(mem);
+        }
+        return node;
     }
 
     function forStmt() {
@@ -448,9 +475,10 @@ function parse(lexOutput) {
                 statements: []
             }
         }
+        consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
-        
-        while(!match(Token.DEDENT))
+
+        while (!match(Token.DEDENT))
             node.body.statements.push(statement());
         return node;
     }
