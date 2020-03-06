@@ -16,7 +16,7 @@
 
 [ ] Add better error messages
 
-[ ] Handle the spaces at the end of file better
+[x] Handle the spaces at the end of file better
 
 [ ] Implement indentation sensitivity for fat arrow functions as arguments
 
@@ -30,7 +30,7 @@
 
 [x] Implement 'for' expressions
 
-[ ] Make the indentation length flexible and userdependent(?)
+[ ] Make the indentation length flexible and user dependent(?)
 
 [ ] Better pattern matching in switch case
 
@@ -56,7 +56,7 @@
 
 [ ] Add the spread operator and support it's parsing
 
-[ ] Implement enum parsing
+[x] Implement enum parsing
 
 [NO] _Allow keyword overwriting (?)_
 

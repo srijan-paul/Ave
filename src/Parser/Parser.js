@@ -34,7 +34,8 @@ const Node = {
     InExpr: 'InExpr',
     ForExpr: 'ForExpr',
     Enum: 'Enum',
-    FuncParam: 'FuncParam'
+    FuncParam: 'FuncParam',
+    FuncExpr: 'FuncExpr'
 }
 
 function parse(lexOutput) {
@@ -60,6 +61,11 @@ function parse(lexOutput) {
     function peek() {
         if (eof()) return null;
         return tokens[current];
+    }
+
+    function peekNext() {
+        if (eof() || current + 1 >= tokens.length) return null
+        return tokens[current + 1];
     }
 
     function expect(tokType, err) {
@@ -438,6 +444,11 @@ function parse(lexOutput) {
                 tok: tok
             }
         }
+
+        if (match(Token.PIPE)) {
+            return parseLambda();
+        }
+
         //TODO : add unexpected case handling here
         console.log(next())
         if (match(Token.EOF))
@@ -445,9 +456,46 @@ function parse(lexOutput) {
         error('Unexpected token ' + next().string);
     }
 
+    function parseLambda() {
+        let node = {
+            type: Node.FuncExpr,
+            params: parseLambdaParams(),
+            body: {
+                type: Node.Program,
+                statements: []
+            }
+        }
+        expect(Token.ARROW, 'Expected "->" token ');
+        if (match(Token.INDENT)) {
+            while (!match(Token.DEDENT)) {
+                node.body.statements.push(statement());
+            }
+        } else {
+            node.body.statements.push(statement());
+        }
+        return node
+    }
+
+    function parseLambdaParams() {
+        let params = [];
+        while (!match(Token.PIPE)) {
+            let node = {
+                type: Node.FuncParam,
+                name: expect(Token.IDENTIFIER, 'Expected name as identifier.'),
+            }
+            if (match(Token.EQUAL)) {
+                node.default = expression();
+            }
+            consume(Token.COMMA);
+            params.push(node);
+        }
+        return params;
+    }
+
     // PARSING STATEMENTS:
 
     function statement() {
+        if (eof()) error('Unexpected end of input');
         switch (peek().type) {
             case Token.VAR:
             case Token.CONST:
