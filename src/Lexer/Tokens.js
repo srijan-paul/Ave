@@ -67,7 +67,8 @@ const Token = Object.freeze({
     ENUM: 'ENUM',
     IN: 'IN',
     ELIF: 'ELIF',
-
+    SWITCH: 'SWITCH',
+    CASE: 'CASE'
 });
 
 try {

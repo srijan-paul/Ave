@@ -21,8 +21,11 @@ const keywords = {
     "static": Token.STATIC,
     "class": Token.CLASS,
     "enum": Token.ENUM,
-    "in" : Token.IN,
-    "elif": Token.ELIF
+    "in": Token.IN,
+    "elif": Token.ELIF,
+    "switch": Token.SWITCH,
+    "case": Token.CASE,
+    "const": Token.CONST
 }
 
 try {
