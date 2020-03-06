@@ -27,8 +27,6 @@ const Token = Object.freeze({
     COLON: 'COLON',
     COMMA: 'COMMA',
     DOT: 'DOT',
-    AMPERSAND: 'AMPERSAND',
-    QUESTION: 'QUESTION',
 
     BANG: 'BANG',
     BANG_EQUAL: 'BANG_EQUAL',

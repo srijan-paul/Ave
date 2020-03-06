@@ -16,17 +16,20 @@
     <script src="Lexer/Lexer.js"></script>
     <script src="Parser/Parser.js"></script>
     <script type="text/javascript">
-//         if (typeof module == "object") {
-//             lex = require('./Lexer/Lexer.js');
-//             parse = require('./Parser/Parser.js');
-//         }
+        if (typeof module == "object") {
+            lex = require('./Lexer/Lexer.js');
+            parse = require('./Parser/Parser.js');
+        }
 
-//         const text =
-// `
-// var a = 1, b = c
-// `
-//         console.log(lex(text));
-//         console.log(parse(lex(text)));
+        const text =
+`
+var a = 1 if a else c, d = 102
+call(c) for c in d
+for i in el:
+    call(i)
+`
+        console.log(lex(text));
+        console.log(parse(lex(text)));
     </script>
 </body>
 

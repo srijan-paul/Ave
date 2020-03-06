@@ -20,10 +20,6 @@
 
 **Feature Implementation**
 
-[ ] Come up with a way to implement passing by reference
-
-[ ] Write tests for passing by reference
-
 [ ] Come up with a way to implement Operator overloading
 
 [ ] Write tests for operator overloading
@@ -31,6 +27,8 @@
 [x] Implement 'in' expressions
 
 [x] Implement 'for' expressions
+
+[ ] Make the indentation length flexible and userdependent(?)
 
 **Parser**
 

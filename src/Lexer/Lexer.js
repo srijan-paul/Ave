@@ -236,7 +236,6 @@ function lex(text) {
                     currentLevel = n;
                     addToken(Token.INDENT);
                 } else if (n < currentLevel) {
-                    console.log(currentLevel, peek())
                     if (n != currentLevel - indentLen && peek() != "")
                         throw new Error('Bad Indentation at line ' + line);
                     addToken(Token.DEDENT);

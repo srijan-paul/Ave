@@ -163,11 +163,15 @@ function parse(lexOutput) {
 
     function conditional() {
         let node = or();
-        while (match(Token.QUESTION)) {
-            let cond = conditional(),
+        while (peek() &&
+            peek().type == Token.IF &&
+            peek().line == prev().line) {
+            
+                next();
+            let cond = or(),
                 alternate = null;
-            if (match(Token.COLON)) {
-                alternate = conditional();
+            if (match(Token.ELSE)) {
+                alternate = or();
             }
             node = {
                 type: Node.CondExpr,
@@ -248,11 +252,11 @@ function parse(lexOutput) {
 
     function forExpr() {
         let node = addition();
-        
+
         // A for token in the same line means an for expression
         // a for token in a separate line is a for statement 
         // and not a part of this expression
-        
+
         if (!eof() &&
             peek().type == Token.FOR &&
             peek().line == prev().line) {
