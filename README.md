@@ -1,2 +1,2 @@
 # Ave
-A work in progress, dynamically typed compile-to-JS language with a clean, pythonic syntax.
+A compile-To-JS language that lets you write javasript code in a modern syntax
