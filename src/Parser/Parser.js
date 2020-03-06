@@ -439,6 +439,8 @@ function parse(lexOutput) {
                 return varDecl();
             case Token.FOR:
                 return forStmt();
+            case Token.IF:
+                return IfStmt();
             case Token.ENUM:
                 next();
                 return enumDecl();
@@ -478,7 +480,24 @@ function parse(lexOutput) {
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
 
-        while (!match(Token.DEDENT))
+        while (!match(Token.DEDENT, Token.EOF))
+            node.body.statements.push(statement());
+        return node;
+    }
+
+    function IfStmt() {
+        next();
+        let node = {
+            type: Node.IfStmt,
+            condition: expression(),
+            body: {
+                type: Node.Program,
+                statements: []
+            }
+        }
+        consume(Token.COLON);
+        expect(Token.INDENT, 'Expected Indented block');
+        while (!match(Token.DEDENT, Token.EOF))
             node.body.statements.push(statement());
         return node;
     }
