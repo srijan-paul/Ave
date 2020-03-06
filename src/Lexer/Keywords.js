@@ -11,7 +11,6 @@ const keywords = {
     "if": Token.IF,
     "nil": Token.NIL,
     "or": Token.OR,
-    "print": Token.PRINT,
     "var": Token.VAR,
     "return": Token.RETURN,
     "this": Token.THIS,
@@ -22,7 +21,8 @@ const keywords = {
     "static": Token.STATIC,
     "class": Token.CLASS,
     "enum": Token.ENUM,
-    "in" : Token.IN
+    "in" : Token.IN,
+    "elif": Token.ELIF
 }
 
 try {

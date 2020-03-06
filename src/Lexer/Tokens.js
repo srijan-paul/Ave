@@ -1,9 +1,9 @@
 const Token = Object.freeze({
-    // tokens for easy lexing
+    // tokens for easy parsing
     EOF: 'EOF',
     INDENT: 'INDENT',
     DEDENT: 'DEDENT',
-
+    
     //single character tokens :
     EQUAL: 'EQUAL',
     PIPE: 'PIPE',
@@ -28,7 +28,8 @@ const Token = Object.freeze({
     COMMA: 'COMMA',
     DOT: 'DOT',
     AMPERSAND: 'AMPERSAND',
-    
+    QUESTION: 'QUESTION',
+
     BANG: 'BANG',
     BANG_EQUAL: 'BANG_EQUAL',
     LESS: 'LESS',
@@ -38,7 +39,6 @@ const Token = Object.freeze({
     STAR_EQUAL: 'STAR_EQUAL',
     SLASH_EQUAL: 'SLASH_EQUAL',
     EQUAL_EQUAL: 'EQUAL_EQUAL',
-    PRINT: 'PRINT',
     ARROW: 'ARROW',
 
     //literals 
@@ -67,7 +67,9 @@ const Token = Object.freeze({
     CLASS: 'CLASS',
     NEW: 'NEW',
     ENUM: 'ENUM',
-    IN: 'IN'
+    IN: 'IN',
+    ELIF: 'ELIF',
+
 });
 
 try {

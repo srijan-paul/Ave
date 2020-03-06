@@ -138,7 +138,7 @@ function parse(lexOutput) {
     // PARSING EXPRESSIONS :
 
     function expression() {
-        return assignment();
+        return assignment()
     }
 
     function assignment() {
@@ -163,10 +163,10 @@ function parse(lexOutput) {
 
     function conditional() {
         let node = or();
-        while (match(Token.IF)) {
+        while (match(Token.QUESTION)) {
             let cond = conditional(),
                 alternate = null;
-            if (match(Token.ELSE)) {
+            if (match(Token.COLON)) {
                 alternate = conditional();
             }
             node = {
@@ -248,7 +248,15 @@ function parse(lexOutput) {
 
     function forExpr() {
         let node = addition();
-        if (match(Token.FOR)) {
+        
+        // A for token in the same line means an for expression
+        // a for token in a separate line is a for statement 
+        // and not a part of this expression
+        
+        if (!eof() &&
+            peek().type == Token.FOR &&
+            peek().line == prev().line) {
+            next();
             node = {
                 type: Node.ForExpr,
                 inExpr: conditional(),
@@ -427,6 +435,9 @@ function parse(lexOutput) {
             }
         }
         //TODO : add unexpected case handling here
+        console.log(next())
+        if (match(Token.EOF))
+            return;
         error('Unexpected token ' + next().string);
     }
 
@@ -450,11 +461,13 @@ function parse(lexOutput) {
     }
 
     function enumDecl() {
+        let tok = expect(Token.IDENTIFIER, 'Expected name');
         let node = {
             type: Node.Enum,
-            members: []
+            name: tok.string,
+            members: [],
+            tok: tok,
         }
-        expect(Token.EQUAL, 'Enum must be declared');
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT)) {
@@ -463,6 +476,10 @@ function parse(lexOutput) {
                 error('Expected Name as enum literal.');
             }
             node.members.push(mem);
+            if (!match(Token.COMMA)) {
+                expect(Token.DEDENT, 'expected indented block');
+                break;
+            }
         }
         return node;
     }
@@ -490,15 +507,16 @@ function parse(lexOutput) {
         let node = {
             type: Node.IfStmt,
             condition: expression(),
-            body: {
+            consequent: {
                 type: Node.Program,
                 statements: []
-            }
+            },
+            alternate: null
         }
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT, Token.EOF))
-            node.body.statements.push(statement());
+            node.consequent.statements.push(statement());
         return node;
     }
 

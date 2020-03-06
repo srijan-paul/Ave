@@ -194,6 +194,9 @@ function lex(text) {
             case '&':
                 addToken(Token.AMPERSAND);
                 break;
+            case '?':
+                addToken(Token.QUESTION);
+                break;
             case '#':
                 let str = '';
                 while (!eof() && peek() !== '\n') str += next();
@@ -229,12 +232,13 @@ function lex(text) {
                 if (n > currentLevel) {
                     if (n != currentLevel + indentLen)
                         throw new Error('Bad Indentation.');
+                    levels.push(currentLevel);
                     currentLevel = n;
                     addToken(Token.INDENT);
-                    levels.push(currentLevel);
                 } else if (n < currentLevel) {
-                    if (n != currentLevel - indentLen)
-                        throw new Error('Bad Indentation');
+                    console.log(currentLevel, peek())
+                    if (n != currentLevel - indentLen && peek() != "")
+                        throw new Error('Bad Indentation at line ' + line);
                     addToken(Token.DEDENT);
                     currentLevel = levels.pop();
                 }
@@ -260,6 +264,11 @@ function lex(text) {
         start = current;
         let c = next();
         scanToken(c);
+    }
+
+    while(levels.length){
+        levels.pop();
+        addToken(Token.DEDENT);
     }
 
     tokens.push({
