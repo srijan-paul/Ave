@@ -1,4 +1,4 @@
-var person :=
+var person =
     name: 'Jelo'
     walk: fn()
         print('I am walking')

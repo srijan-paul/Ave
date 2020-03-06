@@ -18,6 +18,8 @@
 
 [ ] Handle the spaces at the end of file better
 
+[ ] Implement indentation sensitivity for fat arrow functions as arguments
+
 **Feature Implementation**
 
 [ ] Come up with a way to implement Operator overloading
@@ -29,6 +31,8 @@
 [x] Implement 'for' expressions
 
 [ ] Make the indentation length flexible and userdependent(?)
+
+[ ] Better pattern matching in switch case
 
 **Parser**
 

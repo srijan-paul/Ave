@@ -17,7 +17,7 @@ const keywords = {
     "true": Token.TRUE,
     "while": Token.WHILE,
     "break": Token.BREAK,
-    "skip": Token.SKIP,
+    "continue": Token.CONTINUE,
     "static": Token.STATIC,
     "class": Token.CLASS,
     "enum": Token.ENUM,

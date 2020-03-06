@@ -194,9 +194,6 @@ function lex(text) {
             case '&':
                 addToken(Token.AMPERSAND);
                 break;
-            case '?':
-                addToken(Token.QUESTION);
-                break;
             case '#':
                 let str = '';
                 while (!eof() && peek() !== '\n') str += next();
@@ -236,10 +233,10 @@ function lex(text) {
                     currentLevel = n;
                     addToken(Token.INDENT);
                 } else if (n < currentLevel) {
-                    if (n != currentLevel - indentLen && peek() != "")
-                        throw new Error('Bad Indentation at line ' + line);
-                    addToken(Token.DEDENT);
-                    currentLevel = levels.pop();
+                    while(n < currentLevel){
+                        addToken(Token.DEDENT);
+                        currentLevel = levels.pop();
+                    } 
                 }
                 break;
             case '"':

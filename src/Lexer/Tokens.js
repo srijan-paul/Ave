@@ -47,7 +47,7 @@ const Token = Object.freeze({
     //KEYWORDS :
     AND: 'AND',
     BREAK: 'BREAK',
-    SKIP: 'SKIP',
+    CONTINUE: 'CONTINUE',
     OR: 'OR',
     IF: 'IF',
     FOR: 'FOR',

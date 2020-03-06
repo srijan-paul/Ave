@@ -24,7 +24,7 @@ const Node = {
     CallExpr: 'CallExpr',
     DotExpr: 'DotExpr',
     ObjExpr: 'ObjExpr',
-    SkipStmt: 'SkipStmt',
+    ContinueStmt: 'ContinueStmt',
     ReturnStmt: 'ReturnStmt',
     CondExpr: 'CondExpr',
     PropertyExpr: 'PropertyExpr',
@@ -166,8 +166,7 @@ function parse(lexOutput) {
         while (peek() &&
             peek().type == Token.IF &&
             peek().line == prev().line) {
-            
-                next();
+            next();
             let cond = or(),
                 alternate = null;
             if (match(Token.ELSE)) {
@@ -455,13 +454,64 @@ function parse(lexOutput) {
             case Token.FOR:
                 return forStmt();
             case Token.IF:
+                next();
                 return IfStmt();
             case Token.ENUM:
                 next();
                 return enumDecl();
+            case Token.WHILE:
+                return whileStmt();
+            case Token.RETURN:
+                return returnStmt();
+            case Token.BREAK:
+                return breakStmt();
+            case Token.CONTINUE:
+                return continueStmt();
             default:
                 return expression();
         }
+    }
+
+    function breakStmt(){
+        return {
+            type: Node.BreakStmt,
+            tok: next()
+        }
+    }
+
+    function returnStmt(){
+        let tok = next();
+        return {
+            type: Node.ReturnStmt,
+            val: expression(),
+            tok: tok
+        }
+    }
+
+    function continueStmt(){
+        return{
+            type: Node.ContinueStmt,
+            tok: next()
+        }
+    }
+
+    function whileStmt(){
+        let tok = next();
+        let node = {
+            type: Node.WhileStmt,
+            condition: expression(),
+            body: {
+                type: Node.Program,
+                statements: [],
+                tok: tok
+            }
+        }
+        consume(Token.COLON);
+        expect(Token.INDENT, 'Expected Indented block')
+        while(!match(Token.DEDENT)){
+            node.body.statements.push(statement());
+        }
+        return node;
     }
 
     function enumDecl() {
@@ -507,7 +557,7 @@ function parse(lexOutput) {
     }
 
     function IfStmt() {
-        next();
+
         let node = {
             type: Node.IfStmt,
             condition: expression(),
@@ -521,6 +571,19 @@ function parse(lexOutput) {
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT, Token.EOF))
             node.consequent.statements.push(statement());
+        if (match(Token.ELIF)) {
+            node.alternate = IfStmt();
+        } else if (match(Token.ELSE)) {
+            node.alternate = {
+                type: Node.Program,
+                statements: []
+            }
+            consume(Token.COLON);
+            expect(Token.INDENT, 'Expected Indented block');
+            while(!match(Token.DEDENT)){
+                node.alternate.statements.push(statement())
+            }
+        }
         return node;
     }
 
