@@ -14,26 +14,20 @@
     <script src="Lexer/Tokens.js"></script>
     <script src="Lexer/Keywords.js"></script>
     <script src="Lexer/Lexer.js"></script>
+    <script src="Parser/NodeTypes.js"></script>
     <script src="Parser/Parser.js"></script>
     <script type="text/javascript">
-//         if (typeof module == "object") {
-//             lex = require('./Lexer/Lexer.js');
-//             parse = require('./Parser/Parser.js');
-//         }
+        if (typeof module == "object") {
+            lex = require('./Lexer/Lexer.js');
+            parse = require('./Parser/Parser.js');
+        }
 
-//         const text =
-// ` 
-// fn add(a, b,c = 12)
-//     var sum = 0
-//     while sum < a + b
-//         sum++
-//     return sum
-// var a = |x = 1| ->
-//     var y = 2*x
-//     return 2*y
-// `
-//         console.log(lex(text));
-//         console.log(parse(lex(text)));
+        const text =
+` 
+var a = 2*3/2**2++
+`
+        console.log(lex(text));
+        console.log(parse(lex(text)));
     </script>
 </body>
 

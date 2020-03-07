@@ -58,6 +58,10 @@
 
 [x] Implement enum parsing
 
+[ ] Parse when expressions after for expressions
+
+[ ] Parse the spread operator
+
 [NO] _Allow keyword overwriting (?)_
 
 **Other**

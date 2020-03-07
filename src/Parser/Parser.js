@@ -1,41 +1,19 @@
 if (typeof module == "object") {
     Token = require('../Lexer/Tokens.js'); // TODO :remove in production
-    lex = require('../Lexer/Lexer.js')
+    lex = require('../Lexer/Lexer.js');
+    Node = require('../Parser/NodeTypes.js')
 }
 
 // starting with a simple expression parser
 // converts a stream of tokens into an AST
 
-const Node = {
-    BinaryExpr: 'BinaryExpr',
-    AssignExpr: 'AssignExpr',
-    FuncDecl: 'FuncDecl',
-    Program: 'Program',
-    Literal: 'Literal',
-    ForStmt: 'ForStmt',
-    IfStmt: 'IfStmt',
-    WhileStmt: 'WhileStmt',
-    VarDeclaration: 'VarDeclaration',
-    VarDeclarator: 'VarDeclarator',
-    ArrayExpr: 'ArrayExpr',
-    PreUnaryExpr: 'PreUnaryExpr',
-    PostUnaryExpr: 'PostUnaryExpr',
-    BreakStmt: 'BreakStmt',
-    CallExpr: 'CallExpr',
-    DotExpr: 'DotExpr',
-    ObjExpr: 'ObjExpr',
-    ContinueStmt: 'ContinueStmt',
-    ReturnStmt: 'ReturnStmt',
-    CondExpr: 'CondExpr',
-    PropertyExpr: 'PropertyExpr',
-    ArrayMemExpr: 'ArrayMemExpr',
-    GroupingExpr: 'GroupingExpr',
-    Identifier: 'Identifier',
-    InExpr: 'InExpr',
-    ForExpr: 'ForExpr',
-    Enum: 'Enum',
-    FuncParam: 'FuncParam',
-    FuncExpr: 'FuncExpr'
+function binaryNode(left, op, right) {
+    return {
+        type: Node.BinaryExpr,
+        left: left,
+        op: op,
+        right: right
+    }
 }
 
 function parse(lexOutput) {
@@ -192,40 +170,23 @@ function parse(lexOutput) {
 
     function or() {
         let node = and();
-        while (match(Token.OR)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: and()
-            }
-        }
+        while (match(Token.OR))
+            node = binaryNode(node, prev(), and());
         return node;
     }
 
 
     function and() {
         let node = equality();
-        while (match(Token.AND)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: equality()
-            }
-        }
+        while (match(Token.AND)) 
+            node = binaryNode(node, prev(), equality());
         return node;
     }
 
     function equality() {
         let node = comparison();
         while (match(Token.EQUAL_EQUAL, Token.BANG_EQUAL)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: comparison()
-            }
+            node = binaryNode(node, prev(), comparison());
         }
         return node;
     }
@@ -234,12 +195,7 @@ function parse(lexOutput) {
         let node = inExpr();
         while (match(Token.GREATER, Token.LESS_EQUAL, Token.GREATER_EQUAL,
                 Token.LESS)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: addition()
-            }
+            node = binaryNode(node, prev(), addition());
         }
         return node;
     }
@@ -280,40 +236,25 @@ function parse(lexOutput) {
 
     function addition() {
         let node = multiplication();
-        while (match(Token.PLUS, Token.MINUS)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: multiplication()
-            }
-        }
+        while (match(Token.PLUS, Token.MINUS)) 
+            node = binaryNode(node, prev(), multiplication());
+        
         return node;
     }
 
     function multiplication() {
         let node = power();
-        while (match(Token.SLASH, Token.STAR, Token.MOD)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: power()
-            }
-        }
+        while (match(Token.SLASH, Token.STAR, Token.MOD)) 
+            node = binaryNode(node, prev(), power());
+        
         return node;
     }
 
     function power() {
         let node = unary();
-        while (match(Token.STAR_STAR)) {
-            node = {
-                type: Node.BinaryExpr,
-                op: prev(),
-                left: node,
-                right: node
-            }
-        }
+        while (match(Token.STAR_STAR)) 
+            node = binaryNode(node, prev(), unary());
+        
         return node;
     }
 
@@ -432,7 +373,8 @@ function parse(lexOutput) {
         if (isLiteral(peek())) {
             return {
                 type: Node.Literal,
-                tok: next()
+                string: next().string,
+                tok: prev()
             }
         }
 
@@ -450,7 +392,7 @@ function parse(lexOutput) {
         }
 
         //TODO : add unexpected case handling here
-        console.log(next())
+
         if (match(Token.EOF))
             return;
         error('Unexpected token ' + next().string);
@@ -473,6 +415,8 @@ function parse(lexOutput) {
         } else {
             node.body.statements.push(statement());
         }
+        if (!node.body.statements.length)
+            error('Expected function body after "->"');
         return node
     }
 
@@ -499,6 +443,7 @@ function parse(lexOutput) {
         switch (peek().type) {
             case Token.VAR:
             case Token.CONST:
+            case Token.LET:
                 return varDecl();
             case Token.FOR:
                 return forStmt();
@@ -575,11 +520,14 @@ function parse(lexOutput) {
 
     function returnStmt() {
         let tok = next();
-        return {
+        let node = {
             type: Node.ReturnStmt,
-            val: expression(),
+            val: null,
             tok: tok
         }
+        if (!check(Token.INDENT))
+            node.val = expression();
+        return node;
     }
 
     function continueStmt() {

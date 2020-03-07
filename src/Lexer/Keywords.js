@@ -9,7 +9,7 @@ const keywords = {
     "for": Token.FOR,
     "fn": Token.FN,
     "if": Token.IF,
-    "nil": Token.NIL,
+    "null": Token.NULL,
     "or": Token.OR,
     "var": Token.VAR,
     "return": Token.RETURN,
@@ -25,7 +25,8 @@ const keywords = {
     "elif": Token.ELIF,
     "switch": Token.SWITCH,
     "case": Token.CASE,
-    "const": Token.CONST
+    "const": Token.CONST,
+    "let": Token.LET
 }
 
 try {
