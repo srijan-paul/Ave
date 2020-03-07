@@ -70,6 +70,8 @@
 
 [ ] Parse the spread operator
 
+[ ] Parse object literals
+
 [NO] _Allow keyword overwriting (?)_
 
 **Other**

@@ -581,7 +581,7 @@ function parse(lexOutput) {
             val: null,
             tok: tok
         }
-        if (!check(Token.INDENT))
+        if (!check(Token.DEDENT) && !eof())
             node.val = expression();
         return node;
     }
