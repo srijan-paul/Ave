@@ -32,7 +32,11 @@
 
 [ ] Make the indentation length flexible and user dependent(?)
 
-[ ] Better pattern matching in switch case
+[x] Better pattern matching in switch case
+
+[ ] Add template strings
+
+[ ] Add embedded JS
 
 **Parser**
 
@@ -46,7 +50,7 @@
 
 [ ] Parse Class declarations
 
-[ ] Parse switch statements
+[x] Parse switch statements
 
 [ ] Implement scope
 
