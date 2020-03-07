@@ -16,6 +16,7 @@
     <script src="Lexer/Lexer.js"></script>
     <script src="Parser/NodeTypes.js"></script>
     <script src="Parser/Parser.js"></script>
+    <script src="Compiler/Compiler.js"></script>
     <script type="text/javascript">
 //         if (typeof module == "object") {
 //             lex = require('./Lexer/Lexer.js');
@@ -23,15 +24,11 @@
 //         }
 
 //         const text =
-// ` 
-// switch a:
-//     case a,c:
-//         c
-//     case b:
-//         fall
+//             `const a = 1, b = 2*2
 // `
 //         console.log(lex(text));
-//         console.log(parse(lex(text)));
+//         console.log(compileToJs(parse(lex(text))));
+
     </script>
 </body>
 

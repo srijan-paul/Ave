@@ -1,8 +1,8 @@
 var person =
     name: 'Jelo'
-    walk: fn()
+    walk: || ->
         print('I am walking')
-    talk: fn()
+    talk: || ->
         print('Hello, My name is Jelo, Nice to meet you')
         print('Have a nice day')
     friends: ['Felo', 'Gelo', 'Melo']

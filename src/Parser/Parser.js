@@ -710,4 +710,5 @@ function parse(lexOutput) {
     }
 
     return program();
+
 }
