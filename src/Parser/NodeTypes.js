@@ -29,5 +29,6 @@ const Node = {
     FuncParam: 'FuncParam',
     FuncExpr: 'FuncExpr',
     SwitchStmt: 'SwitchStmt',
-    SwitchCase: 'SwitchCase'
+    SwitchCase: 'SwitchCase',
+    FallStmt: 'FallStmt'
 }   

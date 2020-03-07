@@ -465,6 +465,8 @@ function parse(lexOutput) {
                 return func();
             case Token.SWITCH:
                 return switchStmt();
+            case Token.FALL:
+                return fallStmt();
             default:
                 return expression();
         }
@@ -563,6 +565,14 @@ function parse(lexOutput) {
             tok: next()
         }
     }
+
+    function fallStmt() {
+        return {
+            type: Node.FallStmt,
+            tok: next()
+        }
+    }
+
 
     function returnStmt() {
         let tok = next();
