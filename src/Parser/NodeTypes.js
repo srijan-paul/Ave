@@ -27,5 +27,7 @@ const Node = {
     ForExpr: 'ForExpr',
     Enum: 'Enum',
     FuncParam: 'FuncParam',
-    FuncExpr: 'FuncExpr'
+    FuncExpr: 'FuncExpr',
+    SwitchStmt: 'SwitchStmt',
+    SwitchCase: 'SwitchCase'
 }   

@@ -44,6 +44,10 @@
 
 [x] Parse Call expressions
 
+[ ] Parse Class declarations
+
+[ ] Parse switch statements
+
 [ ] Implement scope
 
 [x] Start parsing statements and declarations
@@ -66,4 +70,4 @@
 
 **Other**
 
-[ ] Create an error handlig module
+[ ] Create an error handling module

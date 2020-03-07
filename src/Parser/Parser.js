@@ -58,7 +58,7 @@ function parse(lexOutput) {
 
     function consume(tokType) {
         if (peek() && peek().type == tokType)
-            next();
+            return next();
     }
 
     function isLiteral(token) {
@@ -178,7 +178,7 @@ function parse(lexOutput) {
 
     function and() {
         let node = equality();
-        while (match(Token.AND)) 
+        while (match(Token.AND))
             node = binaryNode(node, prev(), equality());
         return node;
     }
@@ -236,25 +236,25 @@ function parse(lexOutput) {
 
     function addition() {
         let node = multiplication();
-        while (match(Token.PLUS, Token.MINUS)) 
+        while (match(Token.PLUS, Token.MINUS))
             node = binaryNode(node, prev(), multiplication());
-        
+
         return node;
     }
 
     function multiplication() {
         let node = power();
-        while (match(Token.SLASH, Token.STAR, Token.MOD)) 
+        while (match(Token.SLASH, Token.STAR, Token.MOD))
             node = binaryNode(node, prev(), power());
-        
+
         return node;
     }
 
     function power() {
         let node = unary();
-        while (match(Token.STAR_STAR)) 
+        while (match(Token.STAR_STAR))
             node = binaryNode(node, prev(), unary());
-        
+
         return node;
     }
 
@@ -463,9 +463,55 @@ function parse(lexOutput) {
                 return continueStmt();
             case Token.FN:
                 return func();
+            case Token.SWITCH:
+                return switchStmt();
             default:
                 return expression();
         }
+    }
+
+    function switchStmt() {
+        next();
+
+        let node = {
+            type: Node.SwitchStmt,
+            discriminant: expression(),
+            cases: []
+        }
+
+        consume(Token.COLON); // users may optinally add colons for more readability
+        expect(Token.INDENT, 'Expected Indented block');
+        while (!match(Token.DEDENT)) {
+            if (!match(Token.CASE, Token.DEFAULT))
+                error('Unexpected Token ' + prev().string);
+            let block = {
+                type: Node.SwitchCase,
+                test: expression(),
+                consequent: []
+            }
+
+            while (match(Token.COMMA)) {
+                node.cases.push(block);
+                block = {
+                    type: Node.SwitchCase,
+                    test: expression(),
+                    consequent: []
+                }
+            }
+
+            consume(Token.COLON);
+
+            if (match(Token.INDENT)) {
+                while (!match(Token.DEDENT)) {
+                    block.consequent.push(statement());
+                }
+            } else {
+                block.consequent.push(statement());
+            }
+            node.cases.push(block)
+        }
+
+        return node;
     }
 
     function func() {

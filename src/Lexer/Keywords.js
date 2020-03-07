@@ -25,8 +25,10 @@ const keywords = {
     "elif": Token.ELIF,
     "switch": Token.SWITCH,
     "case": Token.CASE,
+    "default": Token.DEFAULT,
     "const": Token.CONST,
-    "let": Token.LET
+    "let": Token.LET,
+    "fall": Token.FALL
 }
 
 try {
