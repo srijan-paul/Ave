@@ -1,7 +1,7 @@
 if (typeof module == "object") {
     Token = require('../Lexer/Tokens.js'); // TODO :remove in production
     lex = require('../Lexer/Lexer.js');
-    Node = require('../Parser/NodeTypes.js')
+    Node = require('../Parser/NodeTypes');
 }
 
 // starting with a simple expression parser
@@ -710,5 +710,11 @@ function parse(lexOutput) {
     }
 
     return program();
+
+}
+
+try{
+    module.exports = parse
+}catch(e){
 
 }

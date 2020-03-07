@@ -15,26 +15,64 @@ function compileToJs(ast) {
                 return compileAssign(node);
             case Node.VarDeclaration:
                 return compileVarDecl(node);
+            case Node.Program:
+                return compileProg(node);
+            case Node.GroupingExpr:
+                return compileGroup(node);
+            case Node.Enum:
+                return compileEnum(node);
+            case Node.PropertyExpr:
+                return compileProperty(node);
+            case Node.CallExpr:
+                return compileCall(node);
             default:
                 console.error('Unexpected value');
         }
     }
 
     function compileProg(node) {
-
+        let str = '';
+        for (let stmt of node.statements) {
+            str += toJs(stmt);
+        }
+        return str;
     }
 
-    function compileVarDecl(node){
+    function compileGroup(node) {
+        return '(' + toJs(node.value) + ')';
+    }
+
+    function compileEnum(node) {
+        let str = `const ${node.name} = {`;
+        for (let mem of node.members) {
+            let name = toJs(mem);
+            str += `${name}: '${name}',`
+        }
+        return str + '}';
+    }
+
+    function compileProperty(node) {
+        return toJs(node.object) + '.' + toJs(node.member);
+    }
+
+    function compileCall(node){
+        let str = `${toJs(node.callee)}(`;
+        if(node.args.length)
+            str += node.args.map(toJs).join(',');
+        return str + ')';
+    }
+
+    function compileVarDecl(node) {
         let decls = [];
-        for(let decl of node.declarators){
+        for (let decl of node.declarators) {
             decls.push(compileDeclarator(decl));
         }
         return node.kind + ' ' + decls.join(',');
     }
 
-    function compileDeclarator(node){
+    function compileDeclarator(node) {
         let str = node.name.string;
-        if(node.value)
+        if (node.value)
             str += ' = ' + toJs(node.value);
         return str;
     }
@@ -59,5 +97,11 @@ function compileToJs(ast) {
         return node.tok.string;
     }
 
-    return toJs(ast.statements[0])
+    return toJs(ast)
+}
+
+try {
+    module.exports = compileToJs;
+} catch (e) {
+
 }

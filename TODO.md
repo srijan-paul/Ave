@@ -38,6 +38,8 @@
 
 [ ] Add embedded JS
 
+[ ] Classing 3 statement for loops
+
 **Parser**
 
 [x] Begin work on the parser

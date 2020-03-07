@@ -1,2 +1,2 @@
-print("Hello World");
+console.log("Hello World")
 # expect Hello World

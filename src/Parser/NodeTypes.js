@@ -15,7 +15,7 @@ const Node = {
     BreakStmt: 'BreakStmt',
     CallExpr: 'CallExpr',
     DotExpr: 'DotExpr',
-    ObjExpr: 'ObjExpr',
+    ObjectLiteral: 'ObjectLiteral',
     ContinueStmt: 'ContinueStmt',
     ReturnStmt: 'ReturnStmt',
     CondExpr: 'CondExpr',
@@ -31,4 +31,10 @@ const Node = {
     SwitchStmt: 'SwitchStmt',
     SwitchCase: 'SwitchCase',
     FallStmt: 'FallStmt'
-}   
+}
+
+try {
+    module.exports = Node
+} catch (e) {
+
+}
