@@ -30,7 +30,8 @@ const Node = {
     FuncExpr: 'FuncExpr',
     SwitchStmt: 'SwitchStmt',
     SwitchCase: 'SwitchCase',
-    FallStmt: 'FallStmt'
+    FallStmt: 'FallStmt',
+    ObjectProperty: 'ObjectProperty'
 }
 
 try {

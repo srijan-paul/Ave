@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const lex = require('../../src/Lexer/Lexer.js');
 const parse = require('../../src/Parser/Parser.js');
 const compile = require('../../src/Compiler/Compiler.js');
@@ -7,7 +6,7 @@ const compile = require('../../src/Compiler/Compiler.js');
 // the files inside the testDir directory are compiled
 // and the compiled JS code is logged 
 
-const testDir = '../enum' 
+const testDir = '../enums/' 
 
 fs.readdir(testDir, (err, files) => {
     files.forEach(file => {

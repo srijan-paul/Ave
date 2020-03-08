@@ -56,6 +56,11 @@ function parse(lexOutput) {
         return peek().type === tokType;
     }
 
+    function checkNext(tokType) {
+        if (!peek() || !peekNext()) return false;
+        return (peekNext().type === tokType)
+    }
+
     function consume(tokType) {
         if (peek() && peek().type == tokType)
             return next();
@@ -378,13 +383,23 @@ function parse(lexOutput) {
             }
         }
 
-        if (match(Token.IDENTIFIER)) {
-            let tok = prev();
+        if (check(Token.IDENTIFIER)) {
+            if (checkNext(Token.COLON)) {
+                return parseObject();
+            }
+
+            let tok = next();
             return {
                 type: Node.Identifier,
                 name: tok.string,
                 tok: tok
             }
+        }
+
+        if (match(Token.INDENT)) {
+            let expr = expression();
+            expect(Token.DEDENT, 'Expected Dedent.');
+            return expr;
         }
 
         if (match(Token.PIPE)) {
@@ -396,6 +411,28 @@ function parse(lexOutput) {
         if (match(Token.EOF))
             return;
         error('Unexpected token ' + next().string);
+    }
+
+    function parseObject() {
+        let node = {
+            type: Node.ObjectLiteral,
+            properties: []
+        }
+        while (check(Token.IDENTIFIER) && checkNext(Token.COLON)) {
+            node.properties.push(parseObjectProp());
+        }
+        return node;
+    }
+
+    function parseObjectProp() {
+        let node = {
+            type: Node.ObjectProperty,
+            key: expect(Token.IDENTIFIER, 'Expected name as object property'),
+            value: null
+        }
+        expect(Token.COLON, 'Expected ":" after property name.');
+        node.value = expression();
+        return node;
     }
 
     function parseLambda() {
@@ -713,8 +750,8 @@ function parse(lexOutput) {
 
 }
 
-try{
+try {
     module.exports = parse
-}catch(e){
+} catch (e) {
 
 }
