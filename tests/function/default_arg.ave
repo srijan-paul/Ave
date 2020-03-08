@@ -1,4 +1,4 @@
 fn pow(n, k = 0)
-    return n ** k;
+    return n ** k
 
 print(pow(3), pow(3, 2)) #expect 1, 9

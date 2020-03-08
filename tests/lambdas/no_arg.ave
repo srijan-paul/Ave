@@ -1,4 +1,3 @@
-var f = || -> print("A lambda call")
+var f = || -> console.log("A lambda call")
 f()
 
-#expect 5
