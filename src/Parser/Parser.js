@@ -511,61 +511,56 @@ function parse(lexOutput) {
 
     function switchStmt() {
         next();
-
         let node = {
             type: Node.SwitchStmt,
             discriminant: expression(),
             cases: []
         }
-
-        consume(Token.COLON); // users may optinally add colons for more readability
+         // users may optinally add colons for more readability
+        consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT)) {
-            if (!match(Token.CASE, Token.DEFAULT))
-                error('Unexpected Token ' + prev().string);
-            let tok = prev();
-            let block = {
-                type: Node.SwitchCase,
-                test: null,
-                consequent: [],
-                kind: tok.string,
-                fall: false
-            }
-
-            if (tok.type !== Token.DEFAULT) {
-                block.test = expression();
-                while (match(Token.COMMA)) {
-                    block.fall = true;
-                    node.cases.push(block);
-                    block = {
-                        type: Node.SwitchCase,
-                        test: expression(),
-                        consequent: [],
-                        kind: 'case',
-                        fall: false
-                    }
-                }
-            }
-
-            consume(Token.COLON);
-
-            if (match(Token.INDENT)) {
-                while (!match(Token.DEDENT)) {
-                    if (match(Token.FALL))
-                        block.fall = true;
-                   else block.consequent.push(statement());
-                }
-            } else if (!check(Token.CASE) &&
-                !check(Token.DEFAULT)) {
-                if (match(Token.FALL)) block.fall = true;
-                else block.consequent.push(statement());
-            }
-            console.log(block.consequent.length)
-            if (block.consequent.length == 0)
-                block.fall = true;
-            node.cases.push(block)
+            node.cases.push(parseSwitchCase());
         }
 
+        return node;
+    }
+
+    function parseSwitchCase() {
+        if (!match(Token.CASE, Token.DEFAULT))
+            error('Unexpected Token ' + prev().string);
+        let node = {
+            type: Node.SwitchCase,
+            tests: [],
+            consequent: [],
+            kind: prev().string,
+            fall: false
+        }
+
+        if (prev().type !== Token.DEFAULT) {
+            node.tests.push(expression());
+            while (match(Token.COMMA)) {
+                node.tests.push(expression());
+            }
+        }
+
+        consume(Token.COLON);
+
+        if (match(Token.INDENT)) {
+            while (!match(Token.DEDENT)) {
+                if (match(Token.FALL)) {
+                    node.fall = true;
+                    if (!check(Token.CASE) && !check(Token.DEDENT) &&
+                        !check(Token.DEFAULT))
+                        error('Fall must be the last statement in switch case.');
+                } else
+                    node.consequent.push(statement());
+            }
+        } else if (!check(Token.CASE) &&
+            !check(Token.DEFAULT)) {
+            if (match(Token.FALL)) node.fall = true;
+            else node.consequent.push(statement());
+        }
         return node;
     }
 

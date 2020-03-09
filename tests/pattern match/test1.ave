@@ -4,7 +4,6 @@ switch day
     case saturday, sunday
     case friday
         console.log('Yay!')
-        fall
     default
         console.log("I don't really care")
     

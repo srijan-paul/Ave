@@ -29,6 +29,8 @@ function compileToJs(ast) {
                 return compileFor(node);
             case Node.SwitchStmt:
                 return compileSwitch(node);
+            case Node.BreakStmt:
+                return 'break;';
             default:
                 console.error('Unexpected value');
         }
@@ -42,29 +44,34 @@ function compileToJs(ast) {
         return str;
     }
 
-    function compileSwitch(node){
+    function compileSwitch(node) {
         let str = `switch(${toJs(node.discriminant)}){\n`;
-        for(let switchCase of node.cases){
+        for (let switchCase of node.cases) {
             str += compileSwitchCase(switchCase);
         }
         return str + '\n}';
     }
 
-    function compileSwitchCase(node){
-        let str = node.kind;
-        if(node.test) str += ` ${toJs(node.test)}`;
-        str += ':\n';
-        if(node.consequent.length){
-            for(let stmt of node.consequent){
-                str += toJs(stmt)+'\n';
-            }
+    function compileSwitchCase(node) {
+        let str = ''
+        for (let i = 0; i < node.tests.length - 1; i++) {
+            str += `case ${toJs(node.tests[i])}:\n`;
         }
-        if(!node.fall) str += 'break;'
-        return str+'\n';
+        if (node.tests.length) {
+            str += `case ${toJs(node.tests[node.tests.length - 1])}:\n`;
+        } else {
+            str += 'default:\n'
+        }
+        for (let stmt of node.consequent) {
+            str += toJs(stmt) + '\n';
+        }
+        if (!node.fall)
+            str += 'break;\n';
+        return str;
     }
 
-    function compileFor(node){
-        
+    function compileFor(node) {
+
     }
 
     function compileGroup(node) {
@@ -84,9 +91,9 @@ function compileToJs(ast) {
         return toJs(node.object) + '.' + toJs(node.member);
     }
 
-    function compileCall(node){
+    function compileCall(node) {
         let str = `${toJs(node.callee)}(`;
-        if(node.args.length)
+        if (node.args.length)
             str += node.args.map(toJs).join(',');
         return str + ')';
     }
