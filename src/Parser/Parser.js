@@ -398,7 +398,7 @@ function parse(lexOutput) {
 
         if (match(Token.INDENT)) {
             let expr = expression();
-            expect(Token.DEDENT, 'Expected Dedent.');
+            expect(Token.DEDENT, 'Unexpected indentation.');
             return expr;
         }
 
@@ -523,18 +523,27 @@ function parse(lexOutput) {
         while (!match(Token.DEDENT)) {
             if (!match(Token.CASE, Token.DEFAULT))
                 error('Unexpected Token ' + prev().string);
+            let tok = prev();
             let block = {
                 type: Node.SwitchCase,
-                test: expression(),
-                consequent: []
+                test: null,
+                consequent: [],
+                kind: tok.string,
+                fall: false
             }
 
-            while (match(Token.COMMA)) {
-                node.cases.push(block);
-                block = {
-                    type: Node.SwitchCase,
-                    test: expression(),
-                    consequent: []
+            if (tok.type !== Token.DEFAULT) {
+                block.test = expression();
+                while (match(Token.COMMA)) {
+                    block.fall = true;
+                    node.cases.push(block);
+                    block = {
+                        type: Node.SwitchCase,
+                        test: expression(),
+                        consequent: [],
+                        kind: 'case',
+                        fall: false
+                    }
                 }
             }
 
@@ -542,11 +551,18 @@ function parse(lexOutput) {
 
             if (match(Token.INDENT)) {
                 while (!match(Token.DEDENT)) {
-                    block.consequent.push(statement());
+                    if (match(Token.FALL))
+                        block.fall = true;
+                   else block.consequent.push(statement());
                 }
-            } else {
-                block.consequent.push(statement());
+            } else if (!check(Token.CASE) &&
+                !check(Token.DEFAULT)) {
+                if (match(Token.FALL)) block.fall = true;
+                else block.consequent.push(statement());
             }
+            console.log(block.consequent.length)
+            if (block.consequent.length == 0)
+                block.fall = true;
             node.cases.push(block)
         }
 

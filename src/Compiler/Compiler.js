@@ -25,6 +25,10 @@ function compileToJs(ast) {
                 return compileProperty(node);
             case Node.CallExpr:
                 return compileCall(node);
+            case Node.ForStmt:
+                return compileFor(node);
+            case Node.SwitchStmt:
+                return compileSwitch(node);
             default:
                 console.error('Unexpected value');
         }
@@ -36,6 +40,31 @@ function compileToJs(ast) {
             str += toJs(stmt);
         }
         return str;
+    }
+
+    function compileSwitch(node){
+        let str = `switch(${toJs(node.discriminant)}){\n`;
+        for(let switchCase of node.cases){
+            str += compileSwitchCase(switchCase);
+        }
+        return str + '\n}';
+    }
+
+    function compileSwitchCase(node){
+        let str = node.kind;
+        if(node.test) str += ` ${toJs(node.test)}`;
+        str += ':\n';
+        if(node.consequent.length){
+            for(let stmt of node.consequent){
+                str += toJs(stmt)+'\n';
+            }
+        }
+        if(!node.fall) str += 'break;'
+        return str+'\n';
+    }
+
+    function compileFor(node){
+        
     }
 
     function compileGroup(node) {

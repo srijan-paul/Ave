@@ -10,7 +10,7 @@
 
 [ ] Write Lexer specific tests
 
-[ ] Test the Lexer
+[x] Test the Lexer
 
 [x] Add support for both single and double quote strings
 
@@ -19,6 +19,8 @@
 [x] Handle the spaces at the end of file better
 
 [ ] Implement indentation sensitivity for fat arrow functions as arguments
+
+[ ] Support escape sequences in strings
 
 **Feature Implementation**
 
