@@ -22,6 +22,8 @@
 
 [ ] Support escape sequences in strings
 
+[ ] Add && , is, === and || tokens support
+
 **Feature Implementation**
 
 [ ] Come up with a way to implement Operator overloading
@@ -62,7 +64,7 @@
 
 [ ] Add better error messages
 
-[ ] Come up with a way to add operator overloading
+<!-- [ ] Come up with a way to add operator overloading (There won't be any) -->
 
 [ ] Write several more tests for the parser
 
@@ -72,7 +74,7 @@
 
 [ ] Parse when expressions after for expressions
 
-[ ] Parse the spread operator
+[ ] Parse the spread syntax
 
 [ ] Parse object literals
 

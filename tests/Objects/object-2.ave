@@ -1,0 +1,3 @@
+let Character =
+    name: 'Humpty Dumpty'
+    friends: ['Jelo', 'Helo', 'Kelo']

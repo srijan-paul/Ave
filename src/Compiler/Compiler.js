@@ -31,8 +31,13 @@ function compileToJs(ast) {
                 return compileSwitch(node);
             case Node.BreakStmt:
                 return 'break;';
+            case Node.ObjectLiteral:
+                return compileObj(node);
+            case Node.ArrayExpr:
+                return compileArr(node);
             default:
                 console.error('Unexpected value');
+                return 'null';
         }
     }
 
@@ -42,6 +47,21 @@ function compileToJs(ast) {
             str += toJs(stmt);
         }
         return str;
+    }
+
+    function compileObj(node){
+        let str = '{';
+        str += node.properties.map(compileObjProperty).join(',');
+        return str + '}';
+    }
+
+    function compileObjProperty(node){
+        return `${node.key.string} : ${toJs(node.value)}`
+    }
+
+    function compileArr(node){
+        let members = node.elements.map(toJs).join(',');
+        return '[' + members + ']';
     }
 
     function compileSwitch(node) {
