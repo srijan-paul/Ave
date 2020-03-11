@@ -1,4 +1,4 @@
 var fun = |x = 1, y = 1| -> x*y
 
-print(fun(2, 2), fun(2))
+console.log(fun(2, 2), fun(2))
 #expect 4 2

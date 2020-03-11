@@ -35,6 +35,8 @@ function compileToJs(ast) {
                 return compileObj(node);
             case Node.ArrayExpr:
                 return compileArr(node);
+            case Node.FuncExpr:
+                return compileFuncExpr(node);
             default:
                 console.error('Unexpected value');
                 return 'null';
@@ -49,17 +51,35 @@ function compileToJs(ast) {
         return str;
     }
 
-    function compileObj(node){
+    function compileObj(node) {
         let str = '{';
         str += node.properties.map(compileObjProperty).join(',');
         return str + '}';
     }
 
-    function compileObjProperty(node){
-        return `${node.key.string} : ${toJs(node.value)}`
+    function compileObjProperty(node) {
+        return `${node.key.string} : ${toJs(node.value)}\n`
     }
 
-    function compileArr(node){
+    function compileFuncExpr(node) {
+        let params = '';
+        if (node.params.length)
+            params = node.params.map(compileParam).join(',');
+
+        if (node.body.statements.length > 1)
+            return `(${params}) => {${toJs(node.body)}}\n`;
+        else
+            return `(${params}) => ${toJs(node.body)}\n`;
+    }
+
+    function compileParam(node) {
+        let str = node.name.string;
+        if (node.default)
+            str += ' = ' + toJs(node.default);
+        return str;
+    }
+
+    function compileArr(node) {
         let members = node.elements.map(toJs).join(',');
         return '[' + members + ']';
     }
