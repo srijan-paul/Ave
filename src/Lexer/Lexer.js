@@ -91,6 +91,7 @@ function lex(text) {
     function getString(quote) {
         while (peek() !== quote && !eof()) {
             if (peek() === '\n') line++;
+            else if(peek() === '\\') next();
             next();
         }
         if (eof()) throw new Error(`Unterminated String literal at line ${line}`);

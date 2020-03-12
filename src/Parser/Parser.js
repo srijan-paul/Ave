@@ -211,9 +211,32 @@ function parse(lexOutput) {
             node = {
                 type: Node.InExpr,
                 left: node,
-                right: atom()
+                right: null
             }
+
+            if (match(Token.L_BRACE))
+                node.right = range();
+            else
+                node.right = expression();
         }
+        return node;
+    }
+
+    function range() {
+        let node = {
+            type: Node.RangeExpr,
+            from: null,
+            to: null,
+            step: null
+        }
+        node.from = expression();
+        if (match(Token.COMMA)) {
+            node.to = expression();
+
+            if (match(Token.COMMA))
+                node.step = expression();
+        }
+        expect(Token.R_BRACE, 'Expected closing "}" for range expression');
         return node;
     }
 
@@ -230,11 +253,12 @@ function parse(lexOutput) {
             next();
             node = {
                 type: Node.ForExpr,
-                inExpr: conditional(),
+                inExpr: inExpr(),
                 action: node
             }
-            if (node.inExpr.type !== Node.InExpr)
-                error('Expected in');
+            if (node.inExpr.left.type !== Node.Indentifier)
+                error('Expected identifier.');
+
         }
         return node;
     }
@@ -516,7 +540,7 @@ function parse(lexOutput) {
             discriminant: expression(),
             cases: []
         }
-         // users may optinally add colons for more readability
+        // users may optinally add colons for more readability
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT)) {
@@ -688,7 +712,7 @@ function parse(lexOutput) {
         next();
         let node = {
             type: Node.ForStmt,
-            iterator: inExpr(),
+            inExpr: inExpr(),
             body: {
                 type: Node.Program,
                 statements: []

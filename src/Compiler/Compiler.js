@@ -30,13 +30,17 @@ function compileToJs(ast) {
             case Node.SwitchStmt:
                 return compileSwitch(node);
             case Node.BreakStmt:
-                return 'break;';
+                return ' break ';
             case Node.ObjectLiteral:
                 return compileObj(node);
             case Node.ArrayExpr:
                 return compileArr(node);
             case Node.FuncExpr:
                 return compileFuncExpr(node);
+            case Node.FunDecl:
+                return compileFuncDecl(node);
+            case Node.WhileStmt:
+                return compileWhile(node);
             default:
                 console.error('Unexpected value');
                 return 'null';
@@ -72,6 +76,14 @@ function compileToJs(ast) {
             return `(${params}) => ${toJs(node.body)}\n`;
     }
 
+    function compileFuncDecl(node) {
+        let str = 'function ';
+        if (node.name) str += name;
+        str += '(' + node.params.map(compileParam).join(',') + ') {\n' +
+            toJs(node.body) + '\n}';
+        return str;
+    }
+
     function compileParam(node) {
         let str = node.name.string;
         if (node.default)
@@ -97,21 +109,53 @@ function compileToJs(ast) {
         for (let i = 0; i < node.tests.length - 1; i++) {
             str += `case ${toJs(node.tests[i])}:\n`;
         }
-        if (node.tests.length) {
+
+        if (node.tests.length)
             str += `case ${toJs(node.tests[node.tests.length - 1])}:\n`;
-        } else {
+        else
             str += 'default:\n'
-        }
-        for (let stmt of node.consequent) {
+
+
+        for (let stmt of node.consequent)
             str += toJs(stmt) + '\n';
-        }
+
         if (!node.fall)
             str += 'break;\n';
         return str;
     }
 
     function compileFor(node) {
+        let str = `for(`;
+        let iden = toJs(node.inExpr.left),
+            type = node.inExpr.right.type,
+            rhs = node.inExpr.right;
 
+        if (type == Node.RangeExpr) {
+
+            if (rhs.to) {
+                str += `let ${iden} = ${toJs(rhs.from)};` +
+                    `${iden} < ${toJs(rhs.to)};`
+                if (rhs.step)
+                    str += `${iden} += ${toJs(rhs.step)}`
+                else
+                    str += `${iden}++)`
+            } else {
+                str += `let ${iden} = 0;` +
+                    `${iden} < ${toJs(rhs.from)}; ${iden}++)`
+            }
+
+        } else if (type == Node.Identifier || type == Node.ArrayExpr) {
+            str += `let ${iden} of ${toJs(rhs)})`;
+        } else if (type == Node.ToExpr) {
+            //TODO: extend this part
+        }
+
+        str += `{\n${toJs(node.body)}\n}`;
+        return str;
+    }
+
+    function compileWhile(node) {
+        return `while (${toJs(node.condition)}){\n${toJs(node.body)}\n}`
     }
 
     function compileGroup(node) {
@@ -135,7 +179,7 @@ function compileToJs(ast) {
         let str = `${toJs(node.callee)}(`;
         if (node.args.length)
             str += node.args.map(toJs).join(',');
-        return str + ')';
+        return str + ') ';
     }
 
     function compileVarDecl(node) {
@@ -170,7 +214,7 @@ function compileToJs(ast) {
     function compileLiteral(node) {
         if (node.string == 'nil')
             return null;
-        return node.tok.string;
+        return ' ' + node.tok.string + ' ';
     }
 
     return toJs(ast)

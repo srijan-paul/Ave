@@ -26,10 +26,6 @@
 
 **Feature Implementation**
 
-[ ] Come up with a way to implement Operator overloading
-
-[ ] Write tests for operator overloading
-
 [x] Implement 'in' expressions
 
 [x] Implement 'for' expressions
@@ -42,7 +38,7 @@
 
 [ ] Add embedded JS
 
-[ ] Classing 3 statement for loops
+[ ] Create a separate dev branch for static typing
 
 **Parser**
 

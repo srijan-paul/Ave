@@ -31,7 +31,8 @@ const Node = {
     SwitchStmt: 'SwitchStmt',
     SwitchCase: 'SwitchCase',
     FallStmt: 'FallStmt',
-    ObjectProperty: 'ObjectProperty'
+    ObjectProperty: 'ObjectProperty',
+    RangeExpr: 'RangeExpr'
 }
 
 try {
