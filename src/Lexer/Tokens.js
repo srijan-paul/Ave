@@ -71,7 +71,8 @@ const Token = Object.freeze({
     SWITCH: 'SWITCH',
     CASE: 'CASE',
     DEFAULT: 'DEFAULT',
-    FALL: 'FALL'
+    FALL: 'FALL',
+    TO: 'TO'
 });
 
 try {

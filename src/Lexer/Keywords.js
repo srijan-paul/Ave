@@ -28,7 +28,9 @@ const keywords = {
     "default": Token.DEFAULT,
     "const": Token.CONST,
     "let": Token.LET,
-    "fall": Token.FALL
+    "fall": Token.FALL,
+    "to": Token.TO,
+    "is": Token.IS
 }
 
 try {

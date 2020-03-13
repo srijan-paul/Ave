@@ -91,7 +91,7 @@ function lex(text) {
     function getString(quote) {
         while (peek() !== quote && !eof()) {
             if (peek() === '\n') line++;
-            else if(peek() === '\\') next();
+            else if (peek() === '\\') next();
             next();
         }
         if (eof()) throw new Error(`Unterminated String literal at line ${line}`);
@@ -178,7 +178,12 @@ function lex(text) {
                 addToken(match('=') ? Token.SLASH_EQUAL : Token.SLASH);
                 break;
             case '=':
-                addToken(match('=') ? Token.EQUAL_EQUAL : Token.EQUAL);
+                if (match('=')) {
+                    addToken((match('=')) ? Token.IS : Token.EQUAL_EQUAL)
+                } else {
+                    addToken(Token.EQUAL)
+                }
+
                 break;
             case '!':
                 addToken(match('=') ? Token.BANG_EQUAL : Token.BANG);
@@ -193,7 +198,7 @@ function lex(text) {
                 addToken(match('=') ? Token.GREATER_EQUAL : Token.GREATER);
                 break;
             case '&':
-                addToken(Token.AMPERSAND);
+                addToken(match('&') ? Token.AND : Token.AMPERSAND);
                 break;
             case '#':
                 let str = '';
@@ -206,7 +211,7 @@ function lex(text) {
                 });
                 break;
             case '|':
-                addToken(Token.PIPE);
+                addToken(match('|') ? Token.OR : Token.PIPE);
                 break;
             case ' ':
             case '':
@@ -234,10 +239,10 @@ function lex(text) {
                     currentLevel = n;
                     addToken(Token.INDENT);
                 } else if (n < currentLevel) {
-                    while(n < currentLevel){
+                    while (n < currentLevel) {
                         addToken(Token.DEDENT);
                         currentLevel = levels.pop();
-                    } 
+                    }
                 }
                 break;
             case '"':
@@ -263,7 +268,7 @@ function lex(text) {
         scanToken(c);
     }
 
-    while(levels.length){
+    while (levels.length) {
         levels.pop();
         addToken(Token.DEDENT);
     }

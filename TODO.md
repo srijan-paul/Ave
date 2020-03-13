@@ -20,9 +20,9 @@
 
 [ ] Implement indentation sensitivity for fat arrow functions as arguments
 
-[ ] Support escape sequences in strings
+[x] Support escape sequences in strings
 
-[ ] Add && , is, === and || tokens support
+[x] Add && , is, === and || tokens support
 
 **Feature Implementation**
 
@@ -38,7 +38,7 @@
 
 [ ] Add embedded JS
 
-[ ] Create a separate dev branch for static typing
+[ ] Create a separate dev branch for implementing static typing
 
 **Parser**
 
@@ -72,10 +72,28 @@
 
 [ ] Parse the spread syntax
 
-[ ] Parse object literals
+[ ] Parse `to` syntax
+
+[x] Parse object literals
 
 [NO] _Allow keyword overwriting (?)_
+
+[ ] Object property names can be arrays with single literals in them or identifiers
+
+**Compiler**
+
+[ ] Compiles for/in/when expressions
 
 **Other**
 
 [ ] Create an error handling module
+
+[ ] Start writing documentation
+
+[ ] Setup the cli commands
+
+[ ] Setup a JS code formatter
+
+[ ] Update readme
+
+[ ] copy over the docs from stack edit
