@@ -163,12 +163,12 @@ function compileToJs(ast) {
     }
 
     function compileEnum(node) {
-        let str = `const ${node.name} = {`;
+        let str = `const ${node.name} = Object.freeze({`;
         for (let mem of node.members) {
             let name = toJs(mem);
             str += `${name}: '${name}',`
         }
-        return str + '}';
+        return str + '})';
     }
 
     function compileProperty(node) {
