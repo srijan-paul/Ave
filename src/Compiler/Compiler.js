@@ -43,6 +43,8 @@ function compileToJs(ast) {
                 return compileWhile(node);
             case Node.ToExpr:
                 return compileToExpr(node);
+            case Node.ForExpr:
+                return compileForExpr(node);
             default:
                 console.error('Unexpected value');
                 return 'null';
@@ -52,7 +54,7 @@ function compileToJs(ast) {
     function compileProg(node) {
         let str = '';
         for (let stmt of node.statements) {
-            str += toJs(stmt) + ';';
+            str += toJs(stmt) + ';\n';
         }
         return str;
     }
@@ -98,9 +100,9 @@ function compileToJs(ast) {
         return '[' + members + ']';
     }
 
-    function compileToExpr(node){
-        let str = 
-        `(function(){\nlet arr = [];\n let start = ${toJs(node.start)};
+    function compileToExpr(node) {
+        let str =
+            `(function(){\nlet arr = [];\n let start = ${toJs(node.start)};
 \nlet end = ${toJs(node.end)};\nlet step = ${toJs(node.step)};
 for(let i = start; i < end ; i += step) arr.push(i);\n return arr;\n})()\n`
         return str;
@@ -141,13 +143,32 @@ for(let i = start; i < end ; i += step) arr.push(i);\n return arr;\n})()\n`
             rhs = node.inExpr.right;
 
         if (type == Node.RangeExpr || type == Node.ToExpr) {
-        str += `let ${iden} = ${toJs(rhs.start)}; ${iden} < ${toJs(rhs.end)}; ${iden} += ${toJs(rhs.step)})`
+            str += `let ${iden} = ${toJs(rhs.start)}; ${iden} < ${toJs(rhs.end)}; ${iden} += ${toJs(rhs.step)})`
         } else if (type == Node.Identifier || type == Node.ArrayExpr) {
             str += `let ${iden} of ${toJs(rhs)})`;
         }
 
         str += `{\n${toJs(node.body)}\n}`;
         return str;
+    }
+
+    function compileForExpr(node) {
+        let iden = toJs(node.inExpr.left),
+            type = node.inExpr.right.type,
+            rhs = node.inExpr.right,
+            action = node.action;
+
+        let str = `(function(){\nlet arr = [];\n
+for(let ${iden} = _$i = ${toJs(rhs.start)}; _$i < ${toJs(rhs.end)}; _$i += ${toJs(rhs.step)}){`
+        if (node.condition) {
+            str += `\n\tif(${toJs(node.condition)})\n\t`
+        }
+
+        str += `\tarr.push(${toJs(action)});\n\t${iden} += ${toJs(rhs.step)}   
+}\nreturn arr;\n})()`;
+
+        return str;
+
     }
 
     function compileWhile(node) {
@@ -203,9 +224,21 @@ for(let i = start; i < end ; i += step) arr.push(i);\n return arr;\n})()\n`
     }
 
     function compileBinaryExpr(node) {
-        return `${toJs(node.left)} ${node.op.string} ${toJs(node.right)}`
+        return `${toJs(node.left)} ${checkBinOp(node.op.string)} ${toJs(node.right)}`
     }
 
+    function checkBinOp(str) {
+        switch (str) {
+            case 'and':
+                return '&&';
+            case 'or':
+                return '||';
+            case 'is':
+                return '===';
+            default:
+                return str;
+        }
+    }
 
     function compileLiteral(node) {
         if (node.string == 'nil')

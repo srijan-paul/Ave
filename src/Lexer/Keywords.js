@@ -31,7 +31,8 @@ const keywords = {
     "fall": Token.FALL,
     "to": Token.TO,
     "is": Token.IS,
-    "with": Token.WITH
+    "with": Token.WITH,
+    "when" : Token.WHEN
 }
 
 try {

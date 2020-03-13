@@ -73,7 +73,8 @@ const Token = Object.freeze({
     DEFAULT: 'DEFAULT',
     FALL: 'FALL',
     TO: 'TO',
-    WITH: 'WITH'
+    WITH: 'WITH',
+    WHEN: 'WHEN'
 });
 
 try {

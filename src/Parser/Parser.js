@@ -239,7 +239,6 @@ function parse(lexOutput) {
         node.start = expression();
         if (match(Token.COMMA)) {
             node.end = expression();
-
             if (match(Token.COMMA))
                 node.step = expression();
         }
@@ -260,10 +259,14 @@ function parse(lexOutput) {
             node = {
                 type: Node.ForExpr,
                 inExpr: inExpr(),
-                action: node
+                action: node,
+                condition: null
             }
-            if (node.inExpr.left.type !== Node.Indentifier)
+            if (node.inExpr.type != Node.InExpr) error('Expected "in" expression');
+            if (node.inExpr.right.type != Node.ToExpr &&
+                node.inExpr.left.type !== Node.Indentifier)
                 error('Expected identifier.');
+            if (match(Token.WHEN)) node.condition = expression();
         }
         return node;
     }
@@ -454,6 +457,10 @@ function parse(lexOutput) {
 
         if (match(Token.PIPE)) {
             return parseLambda();
+        }
+
+        if (match(Token.L_BRACE)) {
+            return range();
         }
 
         //TODO : add unexpected case handling here
@@ -745,7 +752,7 @@ function parse(lexOutput) {
             }
         }
         node.inExpr = inExpr();
-        if(node.inExpr.type != Node.InExpr) error('expected in expression')
+        if (node.inExpr.type != Node.InExpr) error('expected in expression')
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
 

@@ -82,7 +82,7 @@
 
 **Compiler**
 
-[ ] Compiles for/in/when expressions
+[ ] Compile for/in/when expressions
 
 **Other**
 
