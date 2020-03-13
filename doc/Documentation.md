@@ -1,3 +1,15 @@
+## Introduction
+
+### What is Ave?
+Ave is a programming language tailored to boost your productivity as a developer by simplifying the syntax, getting rid of all the unnecessary hassle. Ave compiles to Javascript, preserving the useful bits and adding some new features.
+
+### Why use Ave?
+So you can write code that's clean and readable, and write it fast. 
+
+### Playground
+Curious to see what's new about Ave? Take a look at the [Ave cheatsheet](<tba>) and try them in the [online playground](<tba>) 
+
+
 ## Variables
 Declaring variables in Ave are very similar to how you do them in Javascript. However, there are no semi-colons after each statement or expression, they are treated as invalid characters.
 
