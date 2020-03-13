@@ -41,6 +41,8 @@ function compileToJs(ast) {
                 return compileFuncDecl(node);
             case Node.WhileStmt:
                 return compileWhile(node);
+            case Node.ToExpr:
+                return compileToExpr(node);
             default:
                 console.error('Unexpected value');
                 return 'null';
@@ -50,7 +52,7 @@ function compileToJs(ast) {
     function compileProg(node) {
         let str = '';
         for (let stmt of node.statements) {
-            str += toJs(stmt);
+            str += toJs(stmt) + ';';
         }
         return str;
     }
@@ -96,6 +98,14 @@ function compileToJs(ast) {
         return '[' + members + ']';
     }
 
+    function compileToExpr(node){
+        let str = 
+        `(function(){\nlet arr = [];\n let start = ${toJs(node.start)};
+\nlet end = ${toJs(node.end)};\nlet step = ${toJs(node.step)};
+for(let i = start; i < end ; i += step) arr.push(i);\n return arr;\n})()\n`
+        return str;
+    }
+
     function compileSwitch(node) {
         let str = `switch(${toJs(node.discriminant)}){\n`;
         for (let switchCase of node.cases) {
@@ -130,24 +140,10 @@ function compileToJs(ast) {
             type = node.inExpr.right.type,
             rhs = node.inExpr.right;
 
-        if (type == Node.RangeExpr) {
-
-            if (rhs.to) {
-                str += `let ${iden} = ${toJs(rhs.from)};` +
-                    `${iden} < ${toJs(rhs.to)};`
-                if (rhs.step)
-                    str += `${iden} += ${toJs(rhs.step)}`
-                else
-                    str += `${iden}++)`
-            } else {
-                str += `let ${iden} = 0;` +
-                    `${iden} < ${toJs(rhs.from)}; ${iden}++)`
-            }
-
+        if (type == Node.RangeExpr || type == Node.ToExpr) {
+        str += `let ${iden} = ${toJs(rhs.start)}; ${iden} < ${toJs(rhs.end)}; ${iden} += ${toJs(rhs.step)})`
         } else if (type == Node.Identifier || type == Node.ArrayExpr) {
             str += `let ${iden} of ${toJs(rhs)})`;
-        } else if (type == Node.ToExpr) {
-            //TODO: extend this part
         }
 
         str += `{\n${toJs(node.body)}\n}`;
@@ -179,7 +175,7 @@ function compileToJs(ast) {
         let str = `${toJs(node.callee)}(`;
         if (node.args.length)
             str += node.args.map(toJs).join(',');
-        return str + ') ';
+        return str + ')';
     }
 
     function compileVarDecl(node) {
@@ -214,7 +210,7 @@ function compileToJs(ast) {
     function compileLiteral(node) {
         if (node.string == 'nil')
             return null;
-        return ' ' + node.tok.string + ' ';
+        return ' ' + node.value + ' ';
     }
 
     return toJs(ast)

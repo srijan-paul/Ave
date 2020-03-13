@@ -103,6 +103,7 @@ function parse(lexOutput) {
         and : 6
         ==, != : 7
         >, >=,<, <=: 8
+        to-with:
         + - : 9
         %,*,/: 10
         **: 11
@@ -225,13 +226,19 @@ function parse(lexOutput) {
     function range() {
         let node = {
             type: Node.RangeExpr,
-            from: null,
-            to: null,
-            step: null
+            start: {
+                type: Node.Literal,
+                value: 0
+            },
+            end: null,
+            step: {
+                type: Node.Literal,
+                value: 1
+            }
         }
-        node.from = expression();
+        node.start = expression();
         if (match(Token.COMMA)) {
-            node.to = expression();
+            node.end = expression();
 
             if (match(Token.COMMA))
                 node.step = expression();
@@ -241,8 +248,7 @@ function parse(lexOutput) {
     }
 
     function forExpr() {
-        let node = addition();
-
+        let node = toExpr();
         // A for token in the same line means an for expression
         // a for token in a separate line is a for statement 
         // and not a part of this expression
@@ -258,7 +264,27 @@ function parse(lexOutput) {
             }
             if (node.inExpr.left.type !== Node.Indentifier)
                 error('Expected identifier.');
+        }
+        return node;
+    }
 
+
+    function toExpr() {
+        let node = addition();
+        if (match(Token.TO)) {
+            node = {
+                type: Node.ToExpr,
+                start: node,
+                end: addition(),
+                step: {
+                    type: Node.Literal,
+                    value: 1
+                }
+            }
+
+            if (match(Token.WITH)) {
+                node.step = addition();
+            }
         }
         return node;
     }
@@ -402,7 +428,7 @@ function parse(lexOutput) {
         if (isLiteral(peek())) {
             return {
                 type: Node.Literal,
-                string: next().string,
+                value: next().string,
                 tok: prev()
             }
         }
@@ -712,12 +738,14 @@ function parse(lexOutput) {
         next();
         let node = {
             type: Node.ForStmt,
-            inExpr: inExpr(),
+            inExpr: null,
             body: {
                 type: Node.Program,
                 statements: []
             }
         }
+        node.inExpr = inExpr();
+        if(node.inExpr.type != Node.InExpr) error('expected in expression')
         consume(Token.COLON);
         expect(Token.INDENT, 'Expected Indented block');
 

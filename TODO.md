@@ -72,7 +72,7 @@
 
 [ ] Parse the spread syntax
 
-[ ] Parse `to` syntax
+[x] Parse `to` \ `with` syntax
 
 [x] Parse object literals
 

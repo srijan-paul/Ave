@@ -25,11 +25,18 @@
 
         const text =
 `
-for a in b
+let arr = 1 to 20
+console.log(arr)
+for a in 1 to 4
     console.log(a)
-`
-        console.log(lex(text));
-        console.log(compileToJs((parse(lex(text)))));
+`          
+        const tokens = lex(text);
+        const tree = parse(tokens);
+        console.log(tree);
+        const temp = compileToJs(tree);
+        
+        console.log(temp);
+        eval(temp)
 
     </script>
 </body>
