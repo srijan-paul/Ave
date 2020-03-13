@@ -45,8 +45,10 @@ function compileToJs(ast) {
                 return compileToExpr(node);
             case Node.ForExpr:
                 return compileForExpr(node);
+            case Node.PreUnaryExpr:
+                return compilePreUnaryExpr(node);
             default:
-                console.error('Unexpected value');
+                console.error('Unexpected value ' + node.type);
                 return 'null';
         }
     }
@@ -225,6 +227,10 @@ for(let ${iden} = _$i = ${toJs(rhs.start)}; _$i < ${toJs(rhs.end)}; _$i += ${toJ
 
     function compileBinaryExpr(node) {
         return `${toJs(node.left)} ${checkBinOp(node.op.string)} ${toJs(node.right)}`
+    }
+
+    function compilePreUnaryExpr(node) {
+        return `${node.operator.string}${toJs(node.operand)}`;
     }
 
     function checkBinOp(str) {
