@@ -93,7 +93,10 @@ function compileToJs(ast) {
     }
 
     function compileReturn(node){
-        return `return ${toJs(node.value)}`
+        let str = 'return ';
+        if(node.value)
+            str += toJs(node.value);
+        return str;
     }
 
     function compileParam(node) {
