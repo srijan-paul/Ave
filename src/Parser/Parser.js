@@ -683,7 +683,7 @@ function parse(lexOutput) {
         let tok = next();
         let node = {
             type: Node.ReturnStmt,
-            val: null,
+            value: null,
             tok: tok
         }
         if (!check(Token.DEDENT) && !eof())

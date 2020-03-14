@@ -24,15 +24,19 @@
         }
 
         const text =
-            `console.log(i) for i in 1 to 100 when !(i % 2)`
+`funcCall(a, |x|->
+    let c = d
+    return d
+   ,d)
+let a = b`
         const tokens = lex(text);
         console.log(tokens)
         const tree = parse(tokens);
         console.log(tree);
         const temp = compileToJs(tree);
 
-        console.log(temp);
-        eval(temp)
+        // console.log(temp);
+        // eval(temp)
 
     </script>
 </body>

@@ -47,6 +47,8 @@ function compileToJs(ast) {
                 return compileForExpr(node);
             case Node.PreUnaryExpr:
                 return compilePreUnaryExpr(node);
+            case Node.ReturnStmt:
+                return compileReturn(node);
             default:
                 console.error('Unexpected value ' + node.type);
                 return 'null';
@@ -88,6 +90,10 @@ function compileToJs(ast) {
         str += '(' + node.params.map(compileParam).join(',') + ') {\n' +
             toJs(node.body) + '\n}';
         return str;
+    }
+
+    function compileReturn(node){
+        return `return ${toJs(node.value)}`
     }
 
     function compileParam(node) {

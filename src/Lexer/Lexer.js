@@ -19,7 +19,8 @@ function lex(text) {
         currentLevel = 0,
         levels = [],
         brackets = [],
-        comments = [];
+        comments = [],
+        sawArrow = false;
 
     function eof() {
         return current > text.length;
@@ -115,6 +116,8 @@ function lex(text) {
                 break;
             case ')':
                 addToken(Token.R_PAREN);
+                if (brackets[brackets.length - 1] == '->')
+                    brackets.pop();
                 brackets.pop();
                 break;
             case '[':
@@ -122,6 +125,8 @@ function lex(text) {
                 brackets.push(c);
                 break;
             case ']':
+                if (brackets[brackets.length - 1] == '->')
+                    brackets.pop();
                 brackets.pop();
                 addToken(Token.R_SQUARE_BRACE);
                 break;
@@ -148,9 +153,10 @@ function lex(text) {
                     addToken(Token.MINUS_EQUAL);
                 else if (match('-'))
                     addToken(Token.MINUS_MINUS);
-                else if (match('>'))
+                else if (match('>')) {
                     addToken(Token.ARROW);
-                else
+                    brackets.push('->');
+                } else
                     addToken(Token.MINUS);
                 break;
             case '+':
@@ -160,7 +166,6 @@ function lex(text) {
                     addToken(Token.PLUS_PLUS);
                 else
                     addToken(Token.PLUS);
-                break;
                 break;
             case ';':
                 addToken(Token.SEMICOLON);
@@ -227,14 +232,11 @@ function lex(text) {
                 break;
             case '\n':
                 line++;
-                if (brackets.length) break;
+                if (brackets.length &&
+                    brackets[brackets.length - 1] != '->') break;
                 let n = 0;
                 while (match(' ')) n++;
-                if (n % indentLen != 0)
-                    throw new Error('Bad indentation');
                 if (n > currentLevel) {
-                    if (n != currentLevel + indentLen)
-                        throw new Error('Bad Indentation.');
                     levels.push(currentLevel);
                     currentLevel = n;
                     addToken(Token.INDENT);
