@@ -429,6 +429,11 @@ function parse(lexOutput) {
 
     function primary() {
         if (isLiteral(peek())) {
+            if (checkNext(Token.COLON)) {
+                if (peek().type != Token.STRING && peek().type == Token.NUMBER)
+                    error('Unexpected ":".');
+                return parseObject();
+            }
             return {
                 type: Node.Literal,
                 value: next().string,
@@ -475,18 +480,25 @@ function parse(lexOutput) {
             type: Node.ObjectLiteral,
             properties: []
         }
-        while (check(Token.IDENTIFIER) && checkNext(Token.COLON)) {
+        while (isValidKey(peek()) && checkNext(Token.COLON)) {
             node.properties.push(parseObjectProp());
         }
         return node;
     }
 
+    function isValidKey(tok) {
+        return tok.type == Token.IDENTIFIER || tok.type == Token.STRING ||
+            tok.type == Token.NUMBER;
+    }
+
     function parseObjectProp() {
         let node = {
             type: Node.ObjectProperty,
-            key: expect(Token.IDENTIFIER, 'Expected name as object property'),
+            key: next(),
             value: null
         }
+        if (!isValidKey(node.key))
+            error('Invalid object key name.')
         expect(Token.COLON, 'Expected ":" after property name.');
         node.value = expression();
         return node;

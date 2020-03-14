@@ -18,7 +18,7 @@
 
 [x] Handle the spaces at the end of file better
 
-[ ] Implement indentation sensitivity for fat arrow functions as arguments
+[x] Implement indentation sensitivity for fat arrow functions as arguments
 
 [x] Support escape sequences in strings
 
@@ -26,11 +26,11 @@
 
 **Feature Implementation**
 
-[x] Implement 'in' expressions
+[x] Implement `in` expressions
 
-[x] Implement 'for' expressions
+[x] Implement `for` expressions
 
-[ ] Make the indentation length flexible and user dependent(?)
+[x] Make the indentation length flexible and user dependent(?)
 
 [x] Better pattern matching in switch case
 
@@ -68,7 +68,7 @@
 
 [x] Implement enum parsing
 
-[ ] Parse when expressions after for expressions
+[x] Parse when expressions after for expressions
 
 [ ] Parse the spread syntax
 
@@ -78,17 +78,17 @@
 
 [NO] _Allow keyword overwriting (?)_
 
-[ ] Object property names can be arrays with single literals in them or identifiers
+[x] Object property names can be numbers, strings or identifiers
 
 **Compiler**
 
-[ ] Compile for/in/when expressions
+[x] Compile for/in/when expressions
 
 **Other**
 
 [ ] Create an error handling module
 
-[ ] Start writing documentation
+[x] Start writing documentation
 
 [ ] Setup the cli commands
 
