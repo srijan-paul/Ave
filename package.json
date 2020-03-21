@@ -1,0 +1,30 @@
+{
+  "name": "ave",
+  "version": "0.1.0",
+  "description": "Ave is a language that lets you write code for the web in a modern syntax. So you can do more work with less code",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "ave-test",
+    "ave": "node ./src/app.js" 
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiltproofRain/Ave.git"
+  },
+  "keywords": [
+    "Ave",
+    "language",
+    "ave-lang",
+    "compile-to-js"
+  ],
+  "author": "Srijan Paul",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tiltproofRain/Ave/issues"
+  },
+  "homepage": "https://github.com/tiltproofRain/Ave#readme"
+}

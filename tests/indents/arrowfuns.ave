@@ -1,0 +1,1 @@
+window.addEventlistener('click', (e) -> console.log(e))

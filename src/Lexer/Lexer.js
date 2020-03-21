@@ -81,7 +81,7 @@ function lex(text) {
         while (isAlphaNumeric(peek())) next();
         let txt = text.substring(start, current);
         let type = Token.IDENTIFIER;
-        if (keywords[txt]) {
+        if (typeof keywords[txt] == 'string') {
             type = keywords[txt];
             addToken(type);
         } else {
@@ -241,6 +241,13 @@ function lex(text) {
                     currentLevel = n;
                     addToken(Token.INDENT);
                 } else if (n < currentLevel) {
+                    let temp = 0;
+                    if (match('\n')) {
+                        line++;
+                        while (match(' ')) temp++;
+                        if (temp == currentLevel) break;
+                        if(temp > currentLevel) throw new Error('Unexpected Indentation')
+                    }
                     while (n < currentLevel) {
                         addToken(Token.DEDENT);
                         currentLevel = levels.pop();
@@ -249,6 +256,7 @@ function lex(text) {
                 break;
             case '"':
             case "'":
+            case '`':
                 getString(c);
                 break;
             default:

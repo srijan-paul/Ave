@@ -399,7 +399,12 @@ function parse(lexOutput) {
     function grouping() {
         if (match(Token.L_PAREN)) {
             let val = expression();
+            if (match(Token.COMMA)) {
+                return parseLambda(val)
+            }
             expect(Token.R_PAREN, 'Expected closing ")"');
+            if (check(Token.ARROW))
+                return parseLambda(val)
             return {
                 type: Node.GroupingExpr,
                 value: val
@@ -446,12 +451,12 @@ function parse(lexOutput) {
                 return parseObject();
             }
 
-            let tok = next();
-            return {
-                type: Node.Identifier,
-                name: tok.string,
-                tok: tok
+            if (checkNext(Token.ARROW)) {
+                let param = parseIden();
+                return parseLambda(param);
             }
+
+            return parseIden();
         }
 
         if (match(Token.INDENT)) {
@@ -460,19 +465,37 @@ function parse(lexOutput) {
             return expr;
         }
 
-        if (match(Token.PIPE)) {
-            return parseLambda();
-        }
-
         if (match(Token.L_BRACE)) {
             return range();
         }
+
+        if (match(Token.NEW)) {
+            let expr = call();
+            expr.type = Node.NewExpr;
+            return expr;
+        }
+
+        if (check(Token.ARROW)) {
+            return parseLambda();
+        }
+
+        if(match(Token.FN))
+            return func(true);
 
         //TODO : add unexpected case handling here
 
         if (match(Token.EOF))
             return;
         error('Unexpected token ' + next().string);
+    }
+
+    function parseIden() {
+        let tok = next();
+        return {
+            type: Node.Identifier,
+            name: tok.string,
+            tok: tok
+        }
     }
 
     function parseObject() {
@@ -504,31 +527,84 @@ function parse(lexOutput) {
         return node;
     }
 
-    function parseLambda() {
+    function parseLambda(param) {
         let node = {
-            type: Node.FuncExpr,
-            params: parseLambdaParams(),
+            type: Node.ArrowFunc,
+            params: [],
             body: {
                 type: Node.Program,
                 statements: []
             }
         }
+
+        if (param)
+            node.params.push(parameterize(param));
+
+        if (match(Token.ARROW)) {
+            node.body = parseLambdaBody();
+            return node;
+        }
+
+        while (!match(Token.R_PAREN)) {
+            let temp = {
+                type: Node.FuncParam,
+                name: primary(),
+            }
+            if (temp.name.type != Node.Identifier)
+                error('Expected identifier as function parameter')
+            if (match(Token.EQUAL)) {
+                temp.default = expression();
+            }
+            consume(Token.COMMA);
+            node.params.push(temp);
+        }
+
         expect(Token.ARROW, 'Expected "->" token ');
+        node.body = parseLambdaBody();
+        return node;
+    }
+
+    function parseLambdaBody() {
+        let node = {
+            type: Node.Program,
+            statements: []
+        }
         if (match(Token.INDENT)) {
             while (!match(Token.DEDENT)) {
-                node.body.statements.push(statement());
+                node.statements.push(statement());
             }
         } else {
-            node.body.statements.push(statement());
+            node.statements.push(statement());
         }
-        if (!node.body.statements.length)
+        if (!node.statements.length)
             error('Expected function body after "->"');
         return node
     }
 
+    function parameterize(node) {
+        if (node.type == Node.Identifier) {
+            return {
+                type: Node.FuncParam,
+                name: node
+            }
+        }
+
+        if (node.type == Node.AssignExpr) {
+            if (left.type !== Node.Identifier)
+                throw new Error('Invalid parameter')
+            return {
+                type: Node.FuncParam,
+                name: node.left.name,
+                default: node.right
+            }
+        }
+
+        return null;
+    }
+
     function parseLambdaParams() {
         let params = [];
-        while (!match(Token.PIPE)) {
+        while (!match(Token.R_PAREN)) {
             let node = {
                 type: Node.FuncParam,
                 name: expect(Token.IDENTIFIER, 'Expected name as identifier.'),
@@ -568,11 +644,14 @@ function parse(lexOutput) {
             case Token.CONTINUE:
                 return continueStmt();
             case Token.FN:
+                next();
                 return func();
             case Token.SWITCH:
                 return switchStmt();
             case Token.FALL:
                 return fallStmt();
+            case Token.CLASS:
+                return classDecl();
             default:
                 return expression();
         }
@@ -595,6 +674,7 @@ function parse(lexOutput) {
         return node;
     }
 
+
     function parseSwitchCase() {
         if (!match(Token.CASE, Token.DEFAULT))
             error('Unexpected Token ' + prev().string);
@@ -613,7 +693,6 @@ function parse(lexOutput) {
             }
         }
 
-        consume(Token.COLON);
 
         if (match(Token.INDENT)) {
             while (!match(Token.DEDENT)) {
@@ -633,19 +712,72 @@ function parse(lexOutput) {
         return node;
     }
 
-    function func() {
+    function classDecl() {
         next();
-        let name = expect(Token.IDENTIFIER, 'Expected name.');
+        let node = {
+            type: Node.ClassDecl,
+            tok: expect(Token.IDENTIFIER, 'Expected class name'),
+            name: prev().string,
+            methods: []
+        }
+        expect(Token.INDENT, 'Expected Indented block.');
+        while (!match(Token.DEDENT)) {
+            node.methods.push(method());
+        }
+        return node;
+    }
+
+    function method() {
+        let node = {
+            type: Node.MethodDecl,
+            static: false,
+            params: [],
+            body: {
+                type: Node.Program,
+                statements: []
+            }
+        }
+
+        if (match(Token.GET))
+            node.type = Node.Getter;
+        else if (match(Token.SET))
+            node.type = Node.Setter;
+        else if (match(Token.STATIC))
+            node.static = true;
+
+
+        node.tok = expect(Token.IDENTIFIER, 'Expected Identifier as method name');
+        node.name = node.tok.string
+        node.params = parseParams();
+        expect(Token.INDENT, 'Expected Indented block after method name.');
+        while (!match(Token.DEDENT)) {
+            node.body.statements.push(statement());
+        }
+
+        return node;
+    }
+
+    function func(expr = false) {
+        let tok = prev(),
+            name = null;
+
+        if (!expr)
+            tok = expect(Token.IDENTIFIER, 'Function statements require a function name');
+        else if (match(Token.IDENTIFIER)) {
+            tok = prev();
+        }
+
         let node = {
             type: Node.FuncDecl,
-            name: name.string,
-            tok: name,
+            name: tok.string === 'fn' ? null : tok.string,
+            tok: tok,
             params: parseParams(),
             body: {
                 type: Node.Program,
                 statements: []
             }
         }
+
 
         if (match(Token.IDENTIFIER)) {
             node.name = prev().string;
@@ -663,9 +795,12 @@ function parse(lexOutput) {
         expect(Token.L_PAREN, 'Expected "("');
         let params = []
         while (!match(Token.R_PAREN)) {
+            let name = expression();
+            if (name.type != Node.Identifier)
+                error('Expected name as parameter name.')
             let node = {
                 type: Node.FuncParam,
-                name: expect(Token.IDENTIFIER, 'Expected name as identifier.'),
+                name: name,
             }
             if (match(Token.EQUAL)) {
                 node.default = expression();
@@ -699,7 +834,7 @@ function parse(lexOutput) {
             tok: tok
         }
         if (!check(Token.DEDENT) && !eof())
-            node.val = expression();
+            node.value = expression();
         return node;
     }
 

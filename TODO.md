@@ -24,6 +24,8 @@
 
 [x] Add && , is, === and || tokens support
 
+[ ] Fix the indendtation level bug when two statements are multiple lines apart
+
 **Feature Implementation**
 
 [x] Implement `in` expressions
@@ -54,11 +56,13 @@
 
 [x] Parse switch statements
 
-[ ] Implement scope
+[ ] Implement scope module <!-- useful for when I add static type checking -->
 
 [x] Start parsing statements and declarations
 
 [ ] Add better error messages
+
+[ ] Merge preunaryexpr and post unary expr into a single node type and change the compiler accordingly
 
 <!-- [ ] Come up with a way to add operator overloading (There won't be any) -->
 
@@ -79,6 +83,8 @@
 [NO] _Allow keyword overwriting (?)_
 
 [x] Object property names can be numbers, strings or identifiers
+
+[ ] Indents before values should only be allowed in assignment expressions
 
 **Compiler**
 

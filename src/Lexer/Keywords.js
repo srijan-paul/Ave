@@ -32,7 +32,11 @@ const keywords = {
     "to": Token.TO,
     "is": Token.IS,
     "with": Token.WITH,
-    "when" : Token.WHEN
+    "when" : Token.WHEN,
+    "set": Token.SET,
+    "get": Token.GET,
+    "static": Token.STATIC,
+    "new" : Token.NEW,
 }
 
 try {

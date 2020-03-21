@@ -27,6 +27,8 @@ function compileToJs(ast) {
                 return compileCall(node);
             case Node.ForStmt:
                 return compileFor(node);
+            case Node.IfStmt:
+                return compileIf(node);
             case Node.SwitchStmt:
                 return compileSwitch(node);
             case Node.BreakStmt:
@@ -35,9 +37,9 @@ function compileToJs(ast) {
                 return compileObj(node);
             case Node.ArrayExpr:
                 return compileArr(node);
-            case Node.FuncExpr:
+            case Node.ArrowFunc:
                 return compileFuncExpr(node);
-            case Node.FunDecl:
+            case Node.FuncDecl:
                 return compileFuncDecl(node);
             case Node.WhileStmt:
                 return compileWhile(node);
@@ -47,8 +49,14 @@ function compileToJs(ast) {
                 return compileForExpr(node);
             case Node.PreUnaryExpr:
                 return compilePreUnaryExpr(node);
+            case Node.PostUnaryExpr:
+                return compilePostUnaryExpr(node);
             case Node.ReturnStmt:
                 return compileReturn(node);
+            case Node.ClassDecl:
+                return compileClass(node);
+            case Node.NewExpr:
+                return compileNewExpr(node);
             default:
                 console.error('Unexpected value ' + node.type);
                 return 'null';
@@ -73,34 +81,60 @@ function compileToJs(ast) {
         return `${node.key.string} : ${toJs(node.value)}\n`
     }
 
+
+    function compileClass(node) {
+        let str = `class ${node.name}{`;
+        for (let method of node.methods) {
+            str += compileMethod(method);
+        }
+        return str + '}';
+    }
+
+    function compileMethod(node) {
+        let str = '';
+        if (node.static) str += 'static '
+        if (node.type == Node.Setter) str += 'set ';
+        else if (node.type == Node.Getter) str += 'get ';
+
+        str += node.name + '(';
+        if (node.params.length)
+            str += node.params.map(compileParam).join(',');
+        str += `){\n${toJs(node.body)}}\n`
+        return str;
+    }
+
+    function compileNewExpr(node){
+        return 'new ' + compileCall(node);
+    }
+
     function compileFuncExpr(node) {
         let params = '';
         if (node.params.length)
             params = node.params.map(compileParam).join(',');
 
         if (node.body.statements.length > 1)
-            return `(${params}) => {${toJs(node.body)}}\n`;
+            return `(${params}) => {\n${toJs(node.body)}}\n`;
         else
-            return `(${params}) => ${toJs(node.body)}\n`;
+            return `(${params}) => ${toJs(node.body)}\n`.replace(';', '');
     }
 
     function compileFuncDecl(node) {
         let str = 'function ';
-        if (node.name) str += name;
+        if (node.name) str += node.name;
         str += '(' + node.params.map(compileParam).join(',') + ') {\n' +
             toJs(node.body) + '\n}';
         return str;
     }
 
-    function compileReturn(node){
+    function compileReturn(node) {
         let str = 'return ';
-        if(node.value)
+        if (node.value)
             str += toJs(node.value);
         return str;
     }
 
     function compileParam(node) {
-        let str = node.name.string;
+        let str = node.name.name;
         if (node.default)
             str += ' = ' + toJs(node.default);
         return str;
@@ -160,6 +194,18 @@ for(let i = start; i < end ; i += step) arr.push(i);\n return arr;\n})()\n`
         }
 
         str += `{\n${toJs(node.body)}\n}`;
+        return str;
+    }
+
+    function compileIf(node) {
+        let str = `if(${toJs(node.condition)}){\n${toJs(node.consequent)}\n}`;
+        if (node.alternate) {
+            if (node.alternate.type == Node.IfStmt)
+                str += `else ${compileIf(node.alternate)}`;
+            else
+                str += `else{\n${toJs(node.alternate)}}\n`
+
+        }
         return str;
     }
 
@@ -240,6 +286,10 @@ for(let ${iden} = _$i = ${toJs(rhs.start)}; _$i < ${toJs(rhs.end)}; _$i += ${toJ
 
     function compilePreUnaryExpr(node) {
         return `${node.operator.string}${toJs(node.operand)}`;
+    }
+
+    function compilePostUnaryExpr(node) {
+        return `${toJs(node.operand)} ${node.operator}`;
     }
 
     function checkBinOp(str) {

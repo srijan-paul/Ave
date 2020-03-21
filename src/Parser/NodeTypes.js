@@ -33,7 +33,13 @@ const Node = {
     FallStmt: 'FallStmt',
     ObjectProperty: 'ObjectProperty',
     RangeExpr: 'RangeExpr',
-    ToExpr: 'ToExpr'
+    ToExpr: 'ToExpr',
+    ClassDecl: 'ClassDecl',
+    Getter: 'Getter',
+    Setter: 'Setter',
+    MethodDecl: 'MethodDecl',
+    NewExpr: 'NewExpr',
+    ArrowFunc: 'ArrowFunc'
 }
 
 try {
