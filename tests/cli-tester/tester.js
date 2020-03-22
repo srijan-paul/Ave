@@ -6,7 +6,7 @@ const compile = require('../../src/Compiler/Compiler.js');
 // the files inside the testDir directory are compiled
 // and the compiled JS code is logged 
 
-const testDir = '../Objects/' 
+const testDir = '../indents/' 
 
 fs.readdir(testDir, (err, files) => {
     files.forEach(file => {
@@ -15,7 +15,12 @@ fs.readdir(testDir, (err, files) => {
         fs.readFile(testDir + '/' + file, {
             encoding: 'utf-8'
         }, (err, data) => {
-            console.log(compile(parse(lex(data))))
+            const tokens  = lex(data);
+            console.log(tokens)
+            const ast = parse(tokens);
+            const js = compile(ast);
+            console.log(js);
+            eval(js)
         });
     });
 });

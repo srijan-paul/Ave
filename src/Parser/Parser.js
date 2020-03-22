@@ -433,6 +433,10 @@ function parse(lexOutput) {
 
 
     function primary() {
+
+        if(!peek())
+            error('Unexpected end of input')
+
         if (isLiteral(peek())) {
             if (checkNext(Token.COLON)) {
                 if (peek().type != Token.STRING && peek().type == Token.NUMBER)
@@ -485,8 +489,9 @@ function parse(lexOutput) {
         //TODO : add unexpected case handling here
 
         if (match(Token.EOF))
-            return;
-        error('Unexpected token ' + next().string);
+            error('Unexpected end of input')
+        // error('Unexpected token ' + peek().string);
+        console.log(next())
     }
 
     function parseIden() {
