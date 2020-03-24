@@ -434,7 +434,7 @@ function parse(lexOutput) {
 
     function primary() {
 
-        if(!peek())
+        if (!peek())
             error('Unexpected end of input')
 
         if (isLiteral(peek())) {
@@ -483,7 +483,7 @@ function parse(lexOutput) {
             return parseLambda();
         }
 
-        if(match(Token.FN))
+        if (match(Token.FN))
             return func(true);
 
         //TODO : add unexpected case handling here
@@ -669,8 +669,7 @@ function parse(lexOutput) {
             discriminant: expression(),
             cases: []
         }
-        // users may optinally add colons for more readability
-        consume(Token.COLON);
+
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT)) {
             node.cases.push(parseSwitchCase());
@@ -861,7 +860,7 @@ function parse(lexOutput) {
                 tok: tok
             }
         }
-        consume(Token.COLON);
+
         expect(Token.INDENT, 'Expected Indented block')
         while (!match(Token.DEDENT)) {
             node.body.statements.push(statement());
@@ -904,8 +903,7 @@ function parse(lexOutput) {
             }
         }
         node.inExpr = inExpr();
-        if (node.inExpr.type != Node.InExpr) error('expected in expression')
-        consume(Token.COLON);
+        if (node.inExpr.type != Node.InExpr) error('expected in expression');
         expect(Token.INDENT, 'Expected Indented block');
 
         while (!match(Token.DEDENT, Token.EOF))
@@ -923,7 +921,7 @@ function parse(lexOutput) {
             },
             alternate: null
         }
-        consume(Token.COLON);
+
         expect(Token.INDENT, 'Expected Indented block');
         while (!match(Token.DEDENT, Token.EOF))
             node.consequent.statements.push(statement());
@@ -934,7 +932,6 @@ function parse(lexOutput) {
                 type: Node.Program,
                 statements: []
             }
-            consume(Token.COLON);
             expect(Token.INDENT, 'Expected Indented block');
             while (!match(Token.DEDENT)) {
                 node.alternate.statements.push(statement())
