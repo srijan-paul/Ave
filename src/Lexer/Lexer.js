@@ -9,7 +9,6 @@ if (typeof module == "object") {
     keywords = require('../Lexer/Keywords.js');
 }
 
-const indentLen = 4;
 
 function lex(text) {
     let start = 0,
@@ -19,8 +18,7 @@ function lex(text) {
         currentLevel = 0,
         levels = [],
         brackets = [],
-        comments = [],
-        sawArrow = false;
+        comments = [];
 
     function eof() {
         return current > text.length;

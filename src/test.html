@@ -18,25 +18,23 @@
     <script src="Parser/Parser.js"></script>
     <script src="Compiler/Compiler.js"></script>
     <script type="text/javascript">
-//         if (typeof module == "object") {
-//             lex = require('./Lexer/Lexer.js');
-//             parse = require('./Parser/Parser.js');
-//         }
+        if (typeof module == "object") {
+            lex = require('./Lexer/Lexer.js');
+            parse = require('./Parser/Parser.js');
+        }
 
-//         const text =
+        const text =
     
-// `
-// const a = fn(a, b)
-//     return a + b
-// `
-//         const tokens = lex(text);
-//         console.log(tokens)
-//         const tree = parse(tokens);
-//         console.log(tree);
-//         const temp = compileToJs(tree);
+`
+`
+        const tokens = lex(text);
+        console.log(tokens)
+        const tree = parse(tokens);
+        console.log(tree);
+        const temp = compileToJs(tree);
 
-//         console.log(temp);
-//         eval(temp)
+        console.log(temp);
+        eval(temp)
 
     </script>
 </body>

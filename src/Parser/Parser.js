@@ -47,6 +47,7 @@ function parse(lexOutput) {
     }
 
     function expect(tokType, err) {
+        console.log(peek())
         if (!peek() || peek().type != tokType)
             throw new Error(err);
         return next();
@@ -419,13 +420,16 @@ function parse(lexOutput) {
                 type: Node.ArrayExpr,
                 elements: []
             }
-            while (true) {
-                node.elements.push(expression());
-                if (!match(Token.COMMA)) {
-                    expect(Token.R_SQUARE_BRACE, 'Expected "]"');
-                    break;
+            if (!match(Token.R_SQUARE_BRACE)){
+                while (true) {
+                    node.elements.push(expression());
+                    if (!match(Token.COMMA)) {
+                        expect(Token.R_SQUARE_BRACE, 'Expected "]"');
+                        break;
+                    }
                 }
             }
+
             return node;
         }
         return primary();
@@ -465,7 +469,7 @@ function parse(lexOutput) {
 
         if (match(Token.INDENT)) {
             let expr = expression();
-            expect(Token.DEDENT, 'Unexpected indentation.');
+            expect(Token.DEDENT, 'Expected dedent but got ' + peek().string);
             return expr;
         }
 
@@ -529,6 +533,7 @@ function parse(lexOutput) {
             error('Invalid object key name.')
         expect(Token.COLON, 'Expected ":" after property name.');
         node.value = expression();
+        consume(Token.COMMA)
         return node;
     }
 
