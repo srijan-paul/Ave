@@ -88,6 +88,12 @@ function parse(lexOutput) {
         console.error(str); //TODO : extend this later
     }
 
+
+    function validLValue(node) {
+        return node.type == Node.Identifier || node.type == Node.ArrayMemExpr ||
+            node.type == Node.PropertyExpr;
+    }
+
     // I start off with a simple expression parser that implements recursive
     // descent parsing and expand upon what I have as I go
 
@@ -121,7 +127,7 @@ function parse(lexOutput) {
 
     function program() {
         while (!eof()) {
-            if(ast.hasError) break;
+            if (ast.hasError) break;
             ast.statements.push(statement());
             //console.log(next())
         }
@@ -142,8 +148,8 @@ function parse(lexOutput) {
             let tok = prev();
             let val = assignment();
 
+            if(!validLValue(node)) error('Invalid l-value for assignment.');
 
-            // TODO: add L-value check here
             node = {
                 type: Node.AssignExpr,
                 left: node,
@@ -388,6 +394,7 @@ function parse(lexOutput) {
                 args.push(expression());
                 match(Token.COMMA);
             }
+            //TODO add check for valid callee
             node = {
                 type: Node.CallExpr,
                 callee: node,

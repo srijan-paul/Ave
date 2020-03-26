@@ -16,7 +16,6 @@ fs.readdir(testDir, (err, files) => {
             encoding: 'utf-8'
         }, (err, data) => {
             const tokens  = lex(data);
-            console.log(tokens)
             const ast = parse(tokens);
             const js = compile(ast);
             console.log(js);

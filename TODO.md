@@ -8,7 +8,7 @@
 
 [x] Lexer should return an object that stores tokens as well as comments
 
-[ ] Write Lexer specific tests
+[x] Write Lexer specific tests
 
 [x] Test the Lexer
 
@@ -24,7 +24,7 @@
 
 [x] Add && , is, === and || tokens support
 
-[ ] Fix the indendtation level bug when two statements are multiple lines apart
+[x] Fix the indendtation level bug when two statements are multiple lines apart
 
 **Feature Implementation**
 
@@ -36,11 +36,13 @@
 
 [x] Better pattern matching in switch case
 
-[ ] Add template strings
+[x] Add template strings
 
 [ ] Add embedded JS
 
 [ ] Create a separate dev branch for implementing static typing
+
+[ ] Lex Regexes
 
 **Parser**
 
@@ -84,7 +86,17 @@
 
 [x] Object property names can be numbers, strings or identifiers
 
-[ ] Indents before values should only be allowed in assignment expressions
+[NO] Indents before values should only be allowed in assignment expressions
+
+[ ] return stmts not allowed in single line lambdas
+
+[ ] Dot expressions should be left recursive.
+
+[ ] Parse destructuring
+
+[ ] Async functions
+
+[ ] parse downto expression
 
 **Compiler**
 

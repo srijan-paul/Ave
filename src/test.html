@@ -23,12 +23,15 @@
             parse = require('./Parser/Parser.js');
         }
 
-        const text =
-    
+        const text = 
 `
-const squaresInRange = n ->
-    console.log(i for i in 0 to n when Math.sqrt(i) == Math.floor(Math.sqrt(i)))
-squaresInRange(100)
+const person = 
+        name : 'John'
+        age: 21
+        pet : 
+            name : 'Tom'
+            age: 2
+console.log(person.pet.name)
 `
         const tokens = lex(text);
         console.log(tokens)

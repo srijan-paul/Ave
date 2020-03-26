@@ -37,6 +37,7 @@ const keywords = {
     "get": Token.GET,
     "static": Token.STATIC,
     "new" : Token.NEW,
+    "function": Token.FN
 }
 
 try {
