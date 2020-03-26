@@ -25,13 +25,21 @@
 
         const text =
     
-`let person = 
-    type: 'BinaryExpr',
-    left: 1,
-    op: 2,
-    right: 3
+`
+fn isLucky(n)
+    const digits = (\`\${n}\`).length
+    let s1 = 0, s2 = 0
 
-window.addEventListener('click', -> console.clear())
+    for i in 0 to digits / 2
+        s1 += n % 10
+        n = Math.floor(n / 10) 
+
+    for i in 0 to digits / 2
+        s2 += n % 10
+        n = Math.floor(n / 10)
+    return s1 == s2
+
+console.log(isLucky(1230))
 `
         const tokens = lex(text);
         console.log(tokens)

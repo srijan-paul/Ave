@@ -236,13 +236,7 @@ function lex(text) {
                     currentLevel = n;
                     addToken(Token.INDENT);
                 } else if (n < currentLevel) {
-                    let temp = 0;
-                    if (match('\n')) {
-                        line++;
-                        while (match(' ')) temp++;
-                        if (temp == currentLevel) break;
-                        if(temp > currentLevel) throw new Error('Unexpected Indentation')
-                    }
+                    if(peek() == '\n') break;
                     while (n < currentLevel) {
                         addToken(Token.DEDENT);
                         currentLevel = levels.pop();
