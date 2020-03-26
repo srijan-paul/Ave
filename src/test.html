@@ -25,7 +25,13 @@
 
         const text =
     
-`
+`let person = 
+    type: 'BinaryExpr',
+    left: 1,
+    op: 2,
+    right: 3
+
+window.addEventListener('click', -> console.clear())
 `
         const tokens = lex(text);
         console.log(tokens)

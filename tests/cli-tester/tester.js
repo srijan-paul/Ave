@@ -6,7 +6,7 @@ const compile = require('../../src/Compiler/Compiler.js');
 // the files inside the testDir directory are compiled
 // and the compiled JS code is logged 
 
-const testDir = '../indents/' 
+const testDir = '../general/' 
 
 fs.readdir(testDir, (err, files) => {
     files.forEach(file => {

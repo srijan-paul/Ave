@@ -47,7 +47,6 @@ function parse(lexOutput) {
     }
 
     function expect(tokType, err) {
-        console.log(peek())
         if (!peek() || peek().type != tokType)
             throw new Error(err);
         return next();
@@ -114,17 +113,19 @@ function parse(lexOutput) {
         (..) grouping : 15
     */
 
+    const ast = {
+        type: Node.Program,
+        statements: [],
+        comments: lexOutput.comments
+    }
+
     function program() {
-        let node = {
-            type: Node.Program,
-            statements: [],
-            comments: lexOutput.comments
-        }
         while (!eof()) {
-            node.statements.push(statement());
+            if(ast.hasError) break;
+            ast.statements.push(statement());
             //console.log(next())
         }
-        return node;
+        return ast;
     }
 
     // PARSING EXPRESSIONS :
@@ -420,7 +421,7 @@ function parse(lexOutput) {
                 type: Node.ArrayExpr,
                 elements: []
             }
-            if (!match(Token.R_SQUARE_BRACE)){
+            if (!match(Token.R_SQUARE_BRACE)) {
                 while (true) {
                     node.elements.push(expression());
                     if (!match(Token.COMMA)) {
@@ -495,7 +496,9 @@ function parse(lexOutput) {
         if (match(Token.EOF))
             error('Unexpected end of input')
         // error('Unexpected token ' + peek().string);
-        console.log(next())
+        error(`Unexpected token ${peek().string}`);
+        next()
+        ast.hasError = true;
     }
 
     function parseIden() {
@@ -512,7 +515,8 @@ function parse(lexOutput) {
             type: Node.ObjectLiteral,
             properties: []
         }
-        while (isValidKey(peek()) && checkNext(Token.COLON)) {
+
+        while (peek() && isValidKey(peek()) && checkNext(Token.COLON)) {
             node.properties.push(parseObjectProp());
         }
         return node;

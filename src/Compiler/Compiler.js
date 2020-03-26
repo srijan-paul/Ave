@@ -72,9 +72,9 @@ function compileToJs(ast) {
     }
 
     function compileObj(node) {
-        let str = '{';
+        let str = '({';
         str += node.properties.map(compileObjProperty).join(',');
-        return str + '}';
+        return str + '})';
     }
 
     function compileObjProperty(node) {

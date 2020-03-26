@@ -1,0 +1,7 @@
+fn binaryNode(left, op, right)
+    return
+        type: 'BinaryExpr', left: left,
+        op: op,
+        right: right
+
+console.log(binaryNode(1, '+', 2))

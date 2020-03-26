@@ -165,9 +165,6 @@ function lex(text) {
                 else
                     addToken(Token.PLUS);
                 break;
-            case ';':
-                addToken(Token.SEMICOLON);
-                break;
             case '*':
                 if (match('=')) {
                     addToken(Token.STAR_EQUAL);
