@@ -231,12 +231,12 @@ function lex(text) {
                     brackets[brackets.length - 1] != '->') break;
                 let n = 0;
                 while (match(' ')) n++;
+                if(peek() == '\n') break;
                 if (n > currentLevel) {
                     levels.push(currentLevel);
                     currentLevel = n;
                     addToken(Token.INDENT);
                 } else if (n < currentLevel) {
-                    if(peek() == '\n') break;
                     while (n < currentLevel) {
                         addToken(Token.DEDENT);
                         currentLevel = levels.pop();

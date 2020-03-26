@@ -26,20 +26,9 @@
         const text =
     
 `
-fn isLucky(n)
-    const digits = (\`\${n}\`).length
-    let s1 = 0, s2 = 0
-
-    for i in 0 to digits / 2
-        s1 += n % 10
-        n = Math.floor(n / 10) 
-
-    for i in 0 to digits / 2
-        s2 += n % 10
-        n = Math.floor(n / 10)
-    return s1 == s2
-
-console.log(isLucky(1230))
+const squaresInRange = n ->
+    console.log(i for i in 0 to n when Math.sqrt(i) == Math.floor(Math.sqrt(i)))
+squaresInRange(100)
 `
         const tokens = lex(text);
         console.log(tokens)
