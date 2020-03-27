@@ -272,7 +272,7 @@ function parse(lexOutput) {
             }
             if (node.inExpr.type != Node.InExpr) error('Expected "in" expression');
             if (node.inExpr.right.type != Node.ToExpr &&
-                node.inExpr.left.type !== Node.Indentifier)
+                node.inExpr.left.type !== Node.Identifier)
                 error('Expected identifier.');
             if (match(Token.WHEN)) node.condition = expression();
         }
@@ -353,10 +353,7 @@ function parse(lexOutput) {
     }
 
     function atom() {
-        let node = call();
-
-        // parse property expressions
-
+        let node = arrayMem();
         while (match(Token.DOT)) {
             let tok = prev();
             let member = atom();
@@ -368,9 +365,11 @@ function parse(lexOutput) {
                 tok: tok
             }
         }
+        return node;
+    }
 
-        // Parse array member expressions
-
+    function arrayMem(){
+        let node = call();
         if (match(Token.L_SQUARE_BRACE)) {
             let tok = prev(),
                 member = expression();

@@ -25,13 +25,8 @@
 
         const text = 
 `
-const person = 
-        name : 'John'
-        age: 21
-        pet : 
-            name : 'Tom'
-            age: 2
-console.log(person.pet.name)
+let a = i for i in {1,10,2} when i != 3
+console.log(a)
 `
         const tokens = lex(text);
         console.log(tokens)

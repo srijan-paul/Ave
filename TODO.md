@@ -90,7 +90,7 @@
 
 [ ] return stmts not allowed in single line lambdas
 
-[ ] Dot expressions should be left recursive.
+[x] Dot expressions should be left recursive.
 
 [ ] Parse destructuring
 
